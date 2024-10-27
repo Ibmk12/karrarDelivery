@@ -13,14 +13,17 @@ public class OrderDto {
     private String deliveryAgent;
     private Date orderDate;
     private Date deliveryDate;
-    private long emirateId;
-    private long traderId;
+    private String address;
+    private String longitude;
+    private String latitude;
+    private Long emirateId;
+    private Long traderId;
     private String status;
-    private double totalAmount;
-    private double traderAmount;
-    private double deliveryAmount;
-    private double agentAmount;
-    private double netCompanyAmount;
+    private Double totalAmount;
+    private Double traderAmount;
+    private Double deliveryAmount;
+    private Double agentAmount;
+    private Double netCompanyAmount;
     private String customerPhoneNo;
     private String comment;
 }

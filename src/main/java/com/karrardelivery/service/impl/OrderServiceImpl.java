@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -30,6 +31,9 @@ public class OrderServiceImpl implements OrderService {
         // Populate order fields from DTO
         order.setInvoiceNo(orderDto.getInvoiceNo());
         order.setDeliveryAgent(orderDto.getDeliveryAgent());
+        order.setLongitude(orderDto.getLongitude());
+        order.setLatitude(orderDto.getLatitude());
+        order.setAddress(orderDto.getAddress());
         order.setTotalAmount(orderDto.getTotalAmount());
         order.setTraderAmount(orderDto.getTraderAmount());
         order.setDeliveryAmount(orderDto.getDeliveryAmount());
@@ -53,15 +57,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order updateOrder(Long id, OrderDto orderDto) {
         Order order = orderRepository.findById(id).orElseThrow();
-        order.setInvoiceNo(orderDto.getInvoiceNo());
-        order.setDeliveryAgent(orderDto.getDeliveryAgent());
-        order.setTotalAmount(orderDto.getTotalAmount());
-        order.setTraderAmount(orderDto.getTraderAmount());
-        order.setDeliveryAmount(orderDto.getDeliveryAmount());
-        order.setAgentAmount(orderDto.getAgentAmount());
-        order.setNetCompanyAmount(orderDto.getNetCompanyAmount());
-        order.setCustomerPhoneNo(orderDto.getCustomerPhoneNo());
-        order.setComment(orderDto.getComment());
+        Optional.ofNullable(orderDto.getInvoiceNo()).ifPresent(order::setInvoiceNo);
+        Optional.ofNullable(orderDto.getDeliveryAgent()).ifPresent(order::setDeliveryAgent);
+        Optional.ofNullable(orderDto.getTotalAmount()).ifPresent(order::setTotalAmount);
+        Optional.ofNullable(orderDto.getTraderAmount()).ifPresent(order::setTraderAmount);
+        Optional.ofNullable(orderDto.getDeliveryAmount()).ifPresent(order::setDeliveryAmount);
+        Optional.ofNullable(orderDto.getAgentAmount()).ifPresent(order::setDeliveryAmount);
+        Optional.ofNullable(orderDto.getNetCompanyAmount()).ifPresent(order::setNetCompanyAmount);
+        Optional.ofNullable(orderDto.getCustomerPhoneNo()).ifPresent(order::setCustomerPhoneNo);
+        Optional.ofNullable(orderDto.getComment()).ifPresent(order::setComment);
         return orderRepository.save(order);
     }
 

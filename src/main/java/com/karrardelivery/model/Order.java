@@ -36,11 +36,14 @@ public class Order {
 
     private String deliveryAgent;
     private Date deliveryDate;
-    private double totalAmount;
-    private double traderAmount;
-    private double deliveryAmount;
-    private double agentAmount;
-    private double netCompanyAmount;
+    private String address;
+    private String longitude;
+    private String latitude;
+    private Double totalAmount;
+    private Double traderAmount;
+    private Double deliveryAmount;
+    private Double agentAmount;
+    private Double netCompanyAmount;
     private String customerPhoneNo;
     private String comment;
 
