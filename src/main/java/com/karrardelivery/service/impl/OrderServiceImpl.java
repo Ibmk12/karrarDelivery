@@ -8,9 +8,16 @@ import com.karrardelivery.repository.EmirateRepository;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.OrderService;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -136,6 +143,43 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return reportDtos;
+    }
+
+    @Override
+    public ResponseEntity<Void> exportExcelTemplate(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=order_template.xlsx");
+
+        // Generate the Excel template
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Order Template");
+
+        // Create header row with columns
+        String[] headers = {"Date", "Invoice No", "Trader", "Emirate", "Delivery Agent", "Total Amount", "Trader Amount", "Delivery Amount", "Agent Amount", "Net Company Amount", "longitude", "latitude", "address", "Customer Phone No"};
+        Row headerRow = sheet.createRow(0);
+
+        // Style for the header row
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // Auto-size columns for readability
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Write workbook to response output stream
+        workbook.write(response.getOutputStream());
+        workbook.close();
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 //    private CellStyle createHeaderCellStyle(Workbook workbook) {

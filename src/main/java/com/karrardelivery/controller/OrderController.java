@@ -70,4 +70,9 @@ public class OrderController {
 
         return ResponseEntity.ok(report);
     }
+
+    @GetMapping("/export-template")
+    public ResponseEntity<Void> exportOrderTemplate(HttpServletResponse response) throws IOException {
+        return orderService.exportExcelTemplate(response);
+    }
 }
