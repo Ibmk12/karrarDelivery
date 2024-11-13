@@ -61,11 +61,27 @@ public class Constants {
 
     public static final String Not_FOUND_CODE = "404";
 
-    public class ORDER_STATUS {
+    public static class ORDER_STATUS {
 
         public static final String DELIVERED = "Delivered";
         public static final String CANCELED = "Canceled";
         public static final String UNDER_DELIVERY = "Under Delivery";
         public static final String EXCHANGED = "Exchanged";
+
+        public static String getOrderStatus(String statusCode) {
+
+            switch (statusCode.toUpperCase()) {
+                case "DELIVERED":
+                    return DELIVERED;
+                case "CANCELED":
+                    return CANCELED;
+                case "UNDER_DELIVERY":
+                    return UNDER_DELIVERY;
+                case "EXCHANGED":
+                    return EXCHANGED;
+                default:
+                    return UNDER_DELIVERY;
+            }
+        }
     }
-    }
+}

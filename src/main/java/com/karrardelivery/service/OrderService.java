@@ -5,6 +5,7 @@ import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.model.Order;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.crypto.Data;
 import java.io.IOException;
@@ -20,4 +21,5 @@ public interface OrderService {
     List<Order> getAllOrders();
     List<OrderReportDto> getTraderReport(Long traderId, Date startDate, Date endDate);
     ResponseEntity<Void> exportExcelTemplate(HttpServletResponse response) throws IOException;
+    void saveOrdersFromFile(MultipartFile file) throws IOException;
 }

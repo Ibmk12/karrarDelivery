@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmirateRepository extends JpaRepository<Emirate, Long> {
+
+    Emirate findByName(String name);
 }

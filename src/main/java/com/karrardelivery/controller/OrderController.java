@@ -6,11 +6,13 @@ import com.karrardelivery.dto.ReportDto;
 import com.karrardelivery.model.Order;
 import com.karrardelivery.service.OrderService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
+@Slf4j
 public class OrderController {
 
     @Autowired
@@ -74,5 +77,16 @@ public class OrderController {
     @GetMapping("/export-template")
     public ResponseEntity<Void> exportOrderTemplate(HttpServletResponse response) throws IOException {
         return orderService.exportExcelTemplate(response);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadOrders(@RequestParam("file") MultipartFile file) {
+        try {
+            log.info("Received uploadOrders request: {}", file);
+            orderService.saveOrdersFromFile(file);
+            return ResponseEntity.status(HttpStatus.OK).body("Orders uploaded successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to upload orders: " + e.getMessage());
+        }
     }
 }

@@ -3,28 +3,33 @@ package com.karrardelivery.service.impl;
 import com.karrardelivery.common.utility.Constants;
 import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
+import com.karrardelivery.model.Emirate;
 import com.karrardelivery.model.Order;
+import com.karrardelivery.model.Trader;
 import com.karrardelivery.repository.EmirateRepository;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.OrderService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -155,7 +160,7 @@ public class OrderServiceImpl implements OrderService {
         Sheet sheet = workbook.createSheet("Order Template");
 
         // Create header row with columns
-        String[] headers = {"Date", "Invoice No", "Trader", "Emirate", "Delivery Agent", "Total Amount", "Trader Amount", "Delivery Amount", "Agent Amount", "Net Company Amount", "longitude", "latitude", "address", "Customer Phone No"};
+        String[] headers = {"Date", "Invoice No", "Status", "Trader", "Emirate", "Delivery Agent", "Total Amount", "Trader Amount", "Delivery Amount", "Agent Amount", "Net Company Amount", "longitude", "latitude", "address", "Customer Phone No", "comment"};
         Row headerRow = sheet.createRow(0);
 
         // Style for the header row
@@ -182,6 +187,147 @@ public class OrderServiceImpl implements OrderService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Override
+    @Transactional
+    public void saveOrdersFromFile(MultipartFile file) throws IOException {
+        List<Order> orders = new ArrayList<>();
+
+        try (InputStream is = file.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row headerRow = sheet.getRow(0);
+
+            // Create a mapping of column names to column indices
+            Map<String, Integer> columnMapping = new HashMap<>();
+            for (Cell cell : headerRow) {
+                columnMapping.put(cell.getStringCellValue(), cell.getColumnIndex());
+            }
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) { // Start from row 1 to skip headers
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                Order order = new Order();
+
+                // Retrieve each cell value by column name
+                if (columnMapping.containsKey("Date")) {
+                    Cell orderDateCell = row.getCell(columnMapping.get("Date"));
+                    if (orderDateCell != null && orderDateCell.getCellType() == CellType.NUMERIC) {
+                        order.setOrderDate(orderDateCell.getDateCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("Invoice No")) {
+                    Cell invoiceNoCell = row.getCell(columnMapping.get("Invoice No"));
+                    if (invoiceNoCell != null) {
+                        order.setInvoiceNo(String.valueOf(invoiceNoCell.getNumericCellValue()));
+                    }
+                }
+
+                if (columnMapping.containsKey("Trader")) {
+                    Cell traderCell = row.getCell(columnMapping.get("Trader"));
+                    if (traderCell != null) {
+                        String traderName = traderCell.getStringCellValue();
+                        Trader trader = traderRepository.findByName(traderName); // Assume findByName exists
+                        order.setTrader(trader);
+                    }
+                }
+
+                if (columnMapping.containsKey("Emirate")) {
+                    Cell emirateCell = row.getCell(columnMapping.get("Emirate"));
+                    if (emirateCell != null) {
+                        String emirateName = emirateCell.getStringCellValue();
+                        Emirate emirate = emirateRepository.findByName(emirateName); // Assume findByName exists
+                        order.setEmirate(emirate);
+                    }
+                }
+
+                if (columnMapping.containsKey("Status")) {
+                    Cell statusCell = row.getCell(columnMapping.get("Status"));
+                        String orderStatus = statusCell == null? Constants.ORDER_STATUS.UNDER_DELIVERY: String.valueOf(statusCell.getStringCellValue());
+                        order.setStatus(Constants.ORDER_STATUS.getOrderStatus(orderStatus));
+                }
+
+                if (columnMapping.containsKey("Delivery Agent")) {
+                    Cell deliveryAgent = row.getCell(columnMapping.get("Delivery Agent"));
+                    if (deliveryAgent != null) {
+                        order.setDeliveryAgent(deliveryAgent.getStringCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("Total Amount")) {
+                    Cell totalAmountCell = row.getCell(columnMapping.get("Total Amount"));
+                    if (totalAmountCell != null && totalAmountCell.getCellType() == CellType.NUMERIC) {
+                        order.setTotalAmount(totalAmountCell.getNumericCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("Trader Amount")) {
+                    Cell traderCellAmount = row.getCell(columnMapping.get("Trader Amount"));
+                    if (traderCellAmount != null && traderCellAmount.getCellType() == CellType.NUMERIC) {
+                        order.setTraderAmount(traderCellAmount.getNumericCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("Delivery Amount")) {
+                    Cell deliveryAmountCell = row.getCell(columnMapping.get("Delivery Amount"));
+                    if (deliveryAmountCell != null && deliveryAmountCell.getCellType() == CellType.NUMERIC) {
+                        order.setDeliveryAmount(deliveryAmountCell.getNumericCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("Agent Amount")) {
+                    Cell agentAmountCell = row.getCell(columnMapping.get("Agent Amount"));
+                    if (agentAmountCell != null && agentAmountCell.getCellType() == CellType.NUMERIC) {
+                        order.setAgentAmount(agentAmountCell.getNumericCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("Net Company Amount")) {
+                    Cell netCompanyAmountCell = row.getCell(columnMapping.get("Net Company Amount"));
+                    if (netCompanyAmountCell != null && netCompanyAmountCell.getCellType() == CellType.NUMERIC) {
+                        order.setNetCompanyAmount(netCompanyAmountCell.getNumericCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("longitude")) {
+                    Cell longitudeCell = row.getCell(columnMapping.get("longitude"));
+                    if (longitudeCell != null) {
+                        order.setLongitude(longitudeCell.getStringCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("latitude")) {
+                    Cell latitudeCell = row.getCell(columnMapping.get("latitude"));
+                    if (latitudeCell != null) {
+                        order.setLatitude(latitudeCell.getStringCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("address")) {
+                    Cell addressCell = row.getCell(columnMapping.get("address"));
+                    if (addressCell != null) {
+                        order.setAddress(addressCell.getStringCellValue());
+                    }
+                }
+
+                if (columnMapping.containsKey("Customer Phone No")) {
+                    Cell customerPhoneNoCell = row.getCell(columnMapping.get("Customer Phone No"));
+                    if (customerPhoneNoCell != null) {
+                        order.setCustomerPhoneNo(String.valueOf(customerPhoneNoCell.getNumericCellValue()));
+                    }
+                }
+
+                orders.add(order);
+            }
+
+            // Save all orders in batch
+            orderRepository.saveAll(orders);
+        }
+        catch (Exception ex){
+            log.error("Somrthing went wrong:  ", ex);
+            throw ex;
+        }
+    }
 //    private CellStyle createHeaderCellStyle(Workbook workbook) {
 //        CellStyle style = workbook.createCellStyle();
 //        Font font = workbook.createFont();
