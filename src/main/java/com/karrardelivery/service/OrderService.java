@@ -2,6 +2,7 @@ package com.karrardelivery.service;
 
 import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
+import com.karrardelivery.dto.ReportDto;
 import com.karrardelivery.model.Order;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public interface OrderService {
     void deleteOrder(Long id);
     Order createOrder(OrderDto orderDto);
     List<Order> getAllOrders();
-    List<OrderReportDto> getTraderReport(Long traderId, Date startDate, Date endDate);
+    List<OrderReportDto> getTraderReport(ReportDto reportDto);
     ResponseEntity<Void> exportExcelTemplate(HttpServletResponse response) throws IOException;
     void saveOrdersFromFile(MultipartFile file) throws IOException;
 }

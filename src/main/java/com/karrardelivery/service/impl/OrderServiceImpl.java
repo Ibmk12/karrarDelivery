@@ -3,6 +3,7 @@ package com.karrardelivery.service.impl;
 import com.karrardelivery.common.utility.Constants;
 import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
+import com.karrardelivery.dto.ReportDto;
 import com.karrardelivery.model.Emirate;
 import com.karrardelivery.model.Order;
 import com.karrardelivery.model.Trader;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -127,8 +129,28 @@ public class OrderServiceImpl implements OrderService {
 
     // Method to return data as JSON
     @Override
-    public List<OrderReportDto> getTraderReport(Long traderId, Date startDate, Date endDate) {
-        List<Order> orders = orderRepository.findByTraderIdAndOrderDateBetween(traderId, startDate, endDate);
+    public List<OrderReportDto> getTraderReport(ReportDto reportDto) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = new Date();
+        Date endDate = new Date();
+        try {
+
+            if(reportDto.getStart() == null || reportDto.getStart().isEmpty())
+                sdf.parse(sdf.format(new Date()));
+            else
+                startDate = sdf.parse(reportDto.getStart());
+
+            if(reportDto.getEnd() == null || reportDto.getEnd().isEmpty())
+                sdf.parse(sdf.format(new Date()));
+            else
+                endDate = sdf.parse(reportDto.getEnd());
+
+        }
+        catch (Exception ex){
+            log.error("Error parsing date");
+        }
+
+        List<Order> orders = orderRepository.findByTraderIdAndOrderDateBetween(reportDto.getTraderId(), startDate, endDate);
         List<OrderReportDto> reportDtos = new ArrayList<>();
 
         Long no = 1L;

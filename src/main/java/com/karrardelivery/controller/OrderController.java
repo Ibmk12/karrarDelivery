@@ -66,10 +66,7 @@ public class OrderController {
 
     @GetMapping("/report")
     public ResponseEntity<List<OrderReportDto>> getTraderReport(@RequestBody ReportDto reportDto) throws Exception{
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date startDate = sdf.parse(reportDto.getStart());
-        Date endDate = sdf.parse(reportDto.getEnd());
-        List<OrderReportDto> report = orderService.getTraderReport(reportDto.getTraderId(), startDate, endDate);
+        List<OrderReportDto> report = orderService.getTraderReport(reportDto);
 
         return ResponseEntity.ok(report);
     }
