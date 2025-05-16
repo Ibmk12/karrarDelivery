@@ -2,11 +2,10 @@ package com.karrardelivery.service.impl;
 
 import com.karrardelivery.dto.EmirateDto;
 import com.karrardelivery.mapper.EmirateMapper;
-import com.karrardelivery.model.Emirate;
+import com.karrardelivery.entity.Emirate;
 import com.karrardelivery.repository.EmirateRepository;
 import com.karrardelivery.service.EmirateService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

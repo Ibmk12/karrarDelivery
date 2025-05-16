@@ -1,7 +1,7 @@
 package com.karrardelivery.service;
 
 import com.karrardelivery.dto.TraderDto;
-import com.karrardelivery.model.Trader;
+import com.karrardelivery.entity.Trader;
 
 import java.util.List;
 

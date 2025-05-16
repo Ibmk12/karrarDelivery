@@ -1,7 +1,7 @@
 package com.karrardelivery.service;
 
 import com.karrardelivery.dto.EmirateDto;
-import com.karrardelivery.model.Emirate;
+import com.karrardelivery.entity.Emirate;
 
 import java.util.List;
 

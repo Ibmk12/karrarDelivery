@@ -1,4 +1,4 @@
-package com.karrardelivery.model;
+package com.karrardelivery.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -1,7 +1,7 @@
 package com.karrardelivery.controller;
 
 import com.karrardelivery.dto.EmirateDto;
-import com.karrardelivery.model.Emirate;
+import com.karrardelivery.entity.Emirate;
 import com.karrardelivery.service.EmirateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

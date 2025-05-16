@@ -1,7 +1,7 @@
 package com.karrardelivery.controller;
 
 import com.karrardelivery.dto.TraderDto;
-import com.karrardelivery.model.Trader;
+import com.karrardelivery.entity.Trader;
 import com.karrardelivery.service.TraderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

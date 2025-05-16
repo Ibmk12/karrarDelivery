@@ -1,6 +1,6 @@
 package com.karrardelivery.repository;
 
-import com.karrardelivery.model.Emirate;
+import com.karrardelivery.entity.Emirate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

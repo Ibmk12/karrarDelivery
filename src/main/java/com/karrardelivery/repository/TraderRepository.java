@@ -1,5 +1,5 @@
 package com.karrardelivery.repository;
-import com.karrardelivery.model.Trader;
+import com.karrardelivery.entity.Trader;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
