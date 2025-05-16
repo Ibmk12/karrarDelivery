@@ -7,6 +7,7 @@ import com.karrardelivery.dto.ReportDto;
 import com.karrardelivery.entity.Emirate;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
+import com.karrardelivery.entity.enums.EEmirate;
 import com.karrardelivery.repository.EmirateRepository;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
@@ -36,9 +37,6 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    EmirateRepository emirateRepository;
-
-    @Autowired
     TraderRepository traderRepository;
 
     @Override
@@ -60,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Constants.ORDER_STATUS.UNDER_DELIVERY);
         order.setDeliveryDate(orderDto.getDeliveryDate());
         order.setOrderDate(orderDto.getOrderDate());
-        order.setEmirate(emirateRepository.getReferenceById(orderDto.getEmirateId()));
+        order.setEmirate(orderDto.getEmirate());
         order.setTrader(traderRepository.getReferenceById(orderDto.getTraderId()));
         return orderRepository.save(order);
     }
@@ -157,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
             dto.setNo(no++);
             dto.setOrderDate(order.getOrderDate());
             dto.setInvoiceNo(order.getInvoiceNo());
-            dto.setEmirate(order.getEmirate().getName());
+            dto.setEmirate(order.getEmirate());
             dto.setTotalAmount(order.getTotalAmount());
             dto.setDeliveryAmount(order.getDeliveryAmount());
             dto.setTraderAmount(order.getTraderAmount());
@@ -247,7 +245,7 @@ public class OrderServiceImpl implements OrderService {
                     Cell traderCell = row.getCell(columnMapping.get("Trader"));
                     if (traderCell != null) {
                         String traderName = traderCell.getStringCellValue();
-                        Trader trader = traderRepository.findByName(traderName); // Assume findByName exists
+                        Trader trader = traderRepository.findByName(traderName);
                         order.setTrader(trader);
                     }
                 }
@@ -256,7 +254,7 @@ public class OrderServiceImpl implements OrderService {
                     Cell emirateCell = row.getCell(columnMapping.get("Emirate"));
                     if (emirateCell != null) {
                         String emirateName = emirateCell.getStringCellValue();
-                        Emirate emirate = emirateRepository.findByName(emirateName); // Assume findByName exists
+                        EEmirate emirate = EEmirate.valueOf(emirateName);
                         order.setEmirate(emirate);
                     }
                 }

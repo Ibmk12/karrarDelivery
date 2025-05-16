@@ -1,5 +1,6 @@
 package com.karrardelivery.dto;
 
+import com.karrardelivery.entity.enums.EEmirate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ public class OrderReportDto {
     private int sequenceNo;        // Sequential number for each record
     private Date orderDate;
     private String invoiceNo;
-    private String emirate;
+    private EEmirate emirate;
     private double totalAmount;
     private double deliveryAmount;
     private double traderAmount;

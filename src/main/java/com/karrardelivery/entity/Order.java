@@ -1,6 +1,7 @@
 package com.karrardelivery.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.karrardelivery.entity.enums.EEmirate;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +9,7 @@ import lombok.Setter;
 import java.util.Date;
 
 @Entity
-@Table(name = "orders")  // Escaping the reserved keyword
+@Table(name = "orders")
 @Getter
 @Setter
 public class Order {
@@ -26,10 +27,10 @@ public class Order {
     @JsonIgnore
     private Trader trader;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "emirate_id")
-    @JsonIgnore
-    private Emirate emirate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "emirate", nullable = false)
+    private EEmirate emirate;
+
 
     private String deliveryAgent;
     private Date deliveryDate;

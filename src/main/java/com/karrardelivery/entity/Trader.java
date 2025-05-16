@@ -12,4 +12,5 @@ public class Trader extends CommonBean{
 
     private String name;
     private String contactInfo;
+    private String description;
 }
