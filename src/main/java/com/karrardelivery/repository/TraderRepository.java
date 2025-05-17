@@ -13,4 +13,8 @@ public interface TraderRepository extends JpaRepository<Trader, Long>, JpaSpecif
     boolean existsByPhoneNumberAndDeleted(String phoneNumber, boolean deleted);
 
     boolean existsByEmailAndDeleted(String email, boolean deleted);
+
+    boolean existsByPhoneNumberAndDeletedAndIdNot(String phoneNumber, boolean deleted, Long id);
+
+    boolean existsByEmailAndDeletedAndIdNot(String email, boolean deleted, Long id);
 }

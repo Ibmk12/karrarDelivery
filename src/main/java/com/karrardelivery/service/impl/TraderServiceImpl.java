@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.karrardelivery.constant.ErrorCodes.*;
-import static com.karrardelivery.constant.Messages.ACTIVE_STATUS;
-import static com.karrardelivery.constant.Messages.DATA_FETCHED_SUCCESSFULLY;
+import static com.karrardelivery.constant.Messages.*;
 
 @Service
 @RequiredArgsConstructor
@@ -64,11 +63,22 @@ public class TraderServiceImpl implements TraderService {
     }
 
     @Override
-    public Trader updateTrader(Long id, TraderDto traderDto) {
-        Trader trader = traderRepository.findById(id).orElseThrow();
-        trader.setName(traderDto.getName());
-        //trader.setContactInfo(traderDto.getContactInfo());
-        return traderRepository.save(trader);
+    public GenericResponse<String> updateTrader(Long id, TraderDto traderDto) {
+        Trader trader = traderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("trader.not.found.err.msg"),
+                        TRADER_NOT_FOUND_ERR_CODE));
+
+        if(traderRepository.existsByPhoneNumberAndDeletedAndIdNot(traderDto.getPhoneNumber(), false, id)) {
+            throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.phone.err.msg"), DUPLICATE_TRADER_PHONE_NUMBER_ERR_CODE);
+        }
+        if(traderRepository.existsByEmailAndDeletedAndIdNot(traderDto.getEmail(), false, id)) {
+            throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.email.err.msg"), DUPLICATE_TRADER_EMAIL_ERR_CODE);
+        }
+
+        traderMapper.mapToUpdate(trader, traderDto);
+        traderRepository.save(trader);
+        return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
     }
 
     @Override

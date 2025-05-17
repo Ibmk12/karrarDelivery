@@ -40,8 +40,9 @@ public class TraderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Trader> updateTrader(@PathVariable Long id, @RequestBody TraderDto traderDto) {
-        return ResponseEntity.ok(traderService.updateTrader(id, traderDto));
+    public ResponseEntity<GenericResponse<String>> updateTrader(@PathVariable Long id, @RequestBody TraderDto traderDto) {
+        traderService.updateTrader(id, traderDto);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

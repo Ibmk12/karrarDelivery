@@ -12,6 +12,6 @@ public interface TraderService {
     GenericResponse<String> createTrader(TraderDto traderDto);
     GenericResponse<List<TraderDto>>  getAllTraders(TraderSpec spec);
     GenericResponse<TraderDto>  getTraderById(Long id);
-    Trader updateTrader(Long id, TraderDto traderDto);
+    GenericResponse<String> updateTrader(Long id, TraderDto traderDto);
     void deleteTrader(Long id);
 }

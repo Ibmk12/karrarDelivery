@@ -13,4 +13,8 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface TraderMapper extends IBaseMapper<Trader, TraderDto> {
+
+    @Override
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void mapToUpdate(@MappingTarget Trader entity, TraderDto dto);
 }
