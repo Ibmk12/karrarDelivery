@@ -46,7 +46,7 @@ public class TraderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrader(@PathVariable Long id) {
+    public ResponseEntity<GenericResponse<String>> deleteTrader(@PathVariable Long id) {
         traderService.deleteTrader(id);
         return ResponseEntity.noContent().build();
     }

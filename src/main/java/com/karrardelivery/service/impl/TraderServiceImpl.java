@@ -12,9 +12,11 @@ import com.karrardelivery.mapper.TraderMapper;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.MessageService;
 import com.karrardelivery.service.TraderService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,7 +55,7 @@ public class TraderServiceImpl implements TraderService {
 
     @Override
     public GenericResponse<TraderDto> getTraderById(Long id) {
-        Trader trader = traderRepository.findById(id)
+        Trader trader = traderRepository.findByIdAndDeleted(id, false)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         messageService.getMessage("trader.not.found.err.msg"),
                         TRADER_NOT_FOUND_ERR_CODE));
@@ -64,7 +66,7 @@ public class TraderServiceImpl implements TraderService {
 
     @Override
     public GenericResponse<String> updateTrader(Long id, TraderDto traderDto) {
-        Trader trader = traderRepository.findById(id)
+        Trader trader = traderRepository.findByIdAndDeleted(id, false)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         messageService.getMessage("trader.not.found.err.msg"),
                         TRADER_NOT_FOUND_ERR_CODE));
@@ -82,7 +84,13 @@ public class TraderServiceImpl implements TraderService {
     }
 
     @Override
-    public void deleteTrader(Long id) {
-        traderRepository.deleteById(id);
+    @Transactional
+    public GenericResponse<String> deleteTrader(Long id) {
+        Trader trader = traderRepository.findByIdAndDeleted(id, false)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("trader.not.found.err.msg"),
+                        TRADER_NOT_FOUND_ERR_CODE));
+        trader.setDeleted(true);
+        return GenericResponse.successResponseWithoutData(DATA_DELETED_SUCCESSFULLY);
     }
 }
