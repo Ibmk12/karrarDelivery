@@ -1,4 +1,4 @@
-package com.karrardelivery.spec;
+package com.karrardelivery.controller.spec;
 
 import com.karrardelivery.entity.Order;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;

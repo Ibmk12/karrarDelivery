@@ -4,7 +4,7 @@ import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.dto.ReportDto;
 import com.karrardelivery.entity.Order;
-import com.karrardelivery.spec.OrderSpec;
+import com.karrardelivery.controller.spec.OrderSpec;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
