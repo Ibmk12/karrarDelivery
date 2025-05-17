@@ -7,6 +7,7 @@ import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.service.TraderService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(ApiUrls.TRADER)
+@RequiredArgsConstructor
 public class TraderController {
 
-    @Autowired
-    private TraderService traderService;
+    private final TraderService traderService;
 
     @PostMapping
     public ResponseEntity<GenericResponse<String>> createTrader(@RequestBody @Valid TraderDto traderDto) {

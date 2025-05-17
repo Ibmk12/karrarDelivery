@@ -1,5 +1,6 @@
 package com.karrardelivery.service;
 
+import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.dto.ReportDto;
@@ -16,7 +17,7 @@ public interface OrderService {
 
     Order updateOrder(Long id, OrderDto orderDto);
     void deleteOrder(Long id);
-    Order createOrder(OrderDto orderDto);
+    GenericResponse<String> createOrder(OrderDto orderDto);
     List<OrderDto> getAllOrders(OrderSpec spec);
     List<OrderReportDto> getTraderReport(ReportDto reportDto);
     ResponseEntity<Void> exportExcelTemplate(HttpServletResponse response) throws IOException;

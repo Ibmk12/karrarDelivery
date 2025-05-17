@@ -10,5 +10,7 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecificationExecutor<Order> {
+
+    boolean existsByInvoiceNo(String invoiceNo);
     List<Order> findByTraderIdAndOrderDateBetween(Long traderId, Date startDate, Date endDate);
 }

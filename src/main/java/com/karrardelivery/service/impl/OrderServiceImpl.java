@@ -1,6 +1,8 @@
 package com.karrardelivery.service.impl;
 
 import com.karrardelivery.common.utility.Constants;
+import com.karrardelivery.constant.Messages;
+import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.dto.ReportDto;
@@ -8,9 +10,11 @@ import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.entity.enums.EEmirate;
+import com.karrardelivery.exception.DuplicateResourceException;
 import com.karrardelivery.mapper.OrderMapper;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
+import com.karrardelivery.service.MessageService;
 import com.karrardelivery.service.OrderService;
 import com.karrardelivery.controller.spec.OrderSpec;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,39 +35,25 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.karrardelivery.constant.ErrorCodes.ORDER_NOT_FOUND_ERR_CODE;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-
     private final TraderRepository traderRepository;
-
     private final OrderMapper orderMapper;
+    private final MessageService messageService;
 
     @Override
-    public Order createOrder(OrderDto orderDto) {
-        Order order = new Order();
-        // Populate order fields from DTO
-        order.setInvoiceNo(orderDto.getInvoiceNo());
-        order.setDeliveryAgent(orderDto.getDeliveryAgent());
-        order.setLongitude(orderDto.getLongitude());
-        order.setLatitude(orderDto.getLatitude());
-        order.setAddress(orderDto.getAddress());
-        order.setTotalAmount(orderDto.getTotalAmount());
-        order.setTraderAmount(orderDto.getTraderAmount());
-        order.setDeliveryAmount(orderDto.getDeliveryAmount());
-        order.setAgentAmount(orderDto.getAgentAmount());
-        order.setNetCompanyAmount(orderDto.getNetCompanyAmount());
-        order.setCustomerPhoneNo(orderDto.getCustomerPhoneNo());
-        order.setComment(orderDto.getComment());
-        order.setDeliveryStatus(EDeliveryStatus.valueOf(orderDto.getDeliveryStatus()));
-        order.setDeliveryDate(orderDto.getDeliveryDate());
-        order.setOrderDate(orderDto.getOrderDate());
-        order.setEmirate(EEmirate.valueOf(orderDto.getEmirate()));
-        order.setTrader(traderRepository.getReferenceById(orderDto.getTraderId()));
-        return orderRepository.save(order);
+    public GenericResponse<String> createOrder(OrderDto orderDto) {
+        if(orderRepository.existsByInvoiceNo(orderDto.getInvoiceNo()))
+            throw new DuplicateResourceException(String.format(messageService.getMessage("duplicate.order.err.msg"), orderDto.getInvoiceNo()), ORDER_NOT_FOUND_ERR_CODE);
+        Order order = orderMapper.toEntity(orderDto);
+        orderRepository.save(order);
+        return GenericResponse.successResponseWithoutData(Messages.ORDER_CREATED_SUCCESSFULLY);
     }
 
     @Override

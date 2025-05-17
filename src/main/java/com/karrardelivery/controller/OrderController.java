@@ -1,6 +1,7 @@
 package com.karrardelivery.controller;
 
 import com.karrardelivery.constant.ApiUrls;
+import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.dto.ReportDto;
@@ -29,8 +30,11 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody OrderDto orderDto) {
-        return ResponseEntity.ok(orderService.createOrder(orderDto));
+    public GenericResponse<String> createOrder(@RequestBody OrderDto orderDto) {
+        GenericResponse<String> response = orderService.createOrder(orderDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping
