@@ -11,6 +11,7 @@ import java.util.Date;
 @Setter
 @Getter
 public class OrderDto {
+    private Long id;
     private String invoiceNo;
     private String deliveryAgent;
     private Date orderDate;

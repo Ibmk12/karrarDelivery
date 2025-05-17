@@ -36,8 +36,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.karrardelivery.constant.ErrorCodes.ORDER_NOT_FOUND_ERR_CODE;
-import static com.karrardelivery.constant.ErrorCodes.TRADER_NOT_FOUND_ERR_CODE;
+import static com.karrardelivery.constant.ErrorCodes.*;
+import static com.karrardelivery.constant.Messages.DATA_FETCHED_SUCCESSFULLY;
 
 @Service
 @Slf4j
@@ -52,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public GenericResponse<String> createOrder(OrderDto orderDto) {
         if(orderRepository.existsByInvoiceNo(orderDto.getInvoiceNo()))
-            throw new DuplicateResourceException(String.format(messageService.getMessage("duplicate.order.err.msg"), orderDto.getInvoiceNo()), ORDER_NOT_FOUND_ERR_CODE);
+            throw new DuplicateResourceException(String.format(messageService.getMessage("duplicate.order.err.msg"), orderDto.getInvoiceNo()), DUPLICATE_ORDER_ERR_CODE);
 
         Trader trader = traderRepository.findByIdAndDeleted(orderDto.getTraderId(), false)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -66,11 +66,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getAllOrders(OrderSpec spec) {
+    public GenericResponse<List<OrderDto>> getAllOrders(OrderSpec spec) {
         Specification<Order> specification = Specification.where(spec);
         List<Order> orderList = orderRepository.findAll(specification);
         List<OrderDto> result = orderMapper.toDtoList(orderList);
-        return result;
+        return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
+    }
+
+    @Override
+    public GenericResponse<OrderDto> getOrderById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(messageService.getMessage("order.not.found.err.msg"), id),
+                        ORDER_NOT_FOUND_ERR_CODE
+                ));
+        OrderDto result = orderMapper.toDto(order);
+        return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
     }
 
     @Override

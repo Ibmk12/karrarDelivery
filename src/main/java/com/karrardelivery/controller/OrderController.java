@@ -38,8 +38,13 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderDto>> getAllOrders(OrderSpec spec) {
+    public ResponseEntity<GenericResponse<List<OrderDto>>> getAllOrders(OrderSpec spec) {
         return ResponseEntity.ok(orderService.getAllOrders(spec));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GenericResponse<OrderDto>> getOrderById(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     @PutMapping("/{id}")
