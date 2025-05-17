@@ -1,5 +1,6 @@
 package com.karrardelivery.dto;
 
+import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.entity.enums.EEmirate;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,7 @@ public class OrderDto {
     private String latitude;
     private EEmirate emirate;
     private Long traderId;
-    private String status;
+    private EDeliveryStatus deliveryStatus;
     private Double totalAmount;
     private Double traderAmount;
     private Double deliveryAmount;

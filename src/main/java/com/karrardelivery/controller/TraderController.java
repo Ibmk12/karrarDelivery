@@ -1,5 +1,6 @@
 package com.karrardelivery.controller;
 
+import com.karrardelivery.constant.ApiUrls;
 import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.service.TraderService;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/traders")
+@RequestMapping(ApiUrls.TRADER)
 public class TraderController {
 
     @Autowired

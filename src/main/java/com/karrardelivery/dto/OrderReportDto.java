@@ -11,14 +11,14 @@ import java.util.Date;
 @Getter
 public class OrderReportDto {
 
-    private int sequenceNo;        // Sequential number for each record
+    private int sequenceNo;
     private Date orderDate;
     private String invoiceNo;
     private EEmirate emirate;
     private double totalAmount;
     private double deliveryAmount;
     private double traderAmount;
-    private Long no;             // Assuming this refers to some specific "NO" field in the order
+    private Long no;
     private String status;
 
 }

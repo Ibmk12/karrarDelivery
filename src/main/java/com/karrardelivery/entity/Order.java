@@ -1,6 +1,7 @@
 package com.karrardelivery.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.entity.enums.EEmirate;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,7 +21,10 @@ public class Order {
 
     private Date orderDate;
     private String invoiceNo;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delivery_status", nullable = false)
+    private EDeliveryStatus deliveryStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trader_id")

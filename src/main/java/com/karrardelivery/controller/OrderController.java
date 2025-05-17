@@ -1,5 +1,6 @@
 package com.karrardelivery.controller;
 
+import com.karrardelivery.constant.ApiUrls;
 import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.dto.ReportDto;
@@ -19,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping(ApiUrls.ORDERS)
 @Slf4j
 @RequiredArgsConstructor
 public class OrderController {
