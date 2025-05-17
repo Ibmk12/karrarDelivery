@@ -11,6 +11,7 @@ import com.karrardelivery.entity.Trader;
 import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.entity.enums.EEmirate;
 import com.karrardelivery.exception.DuplicateResourceException;
+import com.karrardelivery.exception.ResourceNotFoundException;
 import com.karrardelivery.mapper.OrderMapper;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
@@ -36,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.karrardelivery.constant.ErrorCodes.ORDER_NOT_FOUND_ERR_CODE;
+import static com.karrardelivery.constant.ErrorCodes.TRADER_NOT_FOUND_ERR_CODE;
 
 @Service
 @Slf4j
@@ -51,7 +53,14 @@ public class OrderServiceImpl implements OrderService {
     public GenericResponse<String> createOrder(OrderDto orderDto) {
         if(orderRepository.existsByInvoiceNo(orderDto.getInvoiceNo()))
             throw new DuplicateResourceException(String.format(messageService.getMessage("duplicate.order.err.msg"), orderDto.getInvoiceNo()), ORDER_NOT_FOUND_ERR_CODE);
+
+        Trader trader = traderRepository.findByIdAndDeleted(orderDto.getTraderId(), false)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("trader.not.found.err.msg"),
+                        TRADER_NOT_FOUND_ERR_CODE));
+
         Order order = orderMapper.toEntity(orderDto);
+        order.setTrader(trader);
         orderRepository.save(order);
         return GenericResponse.successResponseWithoutData(Messages.ORDER_CREATED_SUCCESSFULLY);
     }

@@ -30,7 +30,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public GenericResponse<String> createOrder(@RequestBody OrderDto orderDto) {
+    public ResponseEntity<GenericResponse<String>> createOrder(@RequestBody OrderDto orderDto) {
         GenericResponse<String> response = orderService.createOrder(orderDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
