@@ -1,10 +1,13 @@
 package com.karrardelivery.controller;
 
 import com.karrardelivery.constant.ApiUrls;
+import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.service.TraderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +21,11 @@ public class TraderController {
     private TraderService traderService;
 
     @PostMapping
-    public ResponseEntity<Trader> createTrader(@RequestBody TraderDto traderDto) {
-        return ResponseEntity.ok(traderService.createTrader(traderDto));
+    public ResponseEntity<GenericResponse<String>> createTrader(@RequestBody @Valid TraderDto traderDto) {
+        GenericResponse<String> response = traderService.createTrader(traderDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping

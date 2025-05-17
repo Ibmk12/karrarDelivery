@@ -1,6 +1,7 @@
 package com.karrardelivery.entity;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,14 @@ import lombok.Setter;
 public class Trader extends CommonBean{
 
     private String name;
-    private String contactInfo;
+    @Column(name = "phone_number", nullable = false)
+    private String phoneNumber;
+
+    private String email;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
 }

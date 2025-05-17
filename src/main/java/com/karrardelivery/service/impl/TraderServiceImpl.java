@@ -1,27 +1,47 @@
 package com.karrardelivery.service.impl;
 
+import com.karrardelivery.constant.ErrorCodes;
+import com.karrardelivery.constant.Messages;
+import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Trader;
+import com.karrardelivery.exception.DuplicateResourceException;
+import com.karrardelivery.mapper.TraderMapper;
 import com.karrardelivery.repository.TraderRepository;
+import com.karrardelivery.service.MessageService;
 import com.karrardelivery.service.TraderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.karrardelivery.constant.ErrorCodes.DUPLICATE_TRADER_EMAIL_ERR_CODE;
+import static com.karrardelivery.constant.ErrorCodes.DUPLICATE_TRADER_PHONE_NUMBER_ERR_CODE;
+import static com.karrardelivery.constant.Messages.ACTIVE_STATUS;
+
 @Service
+@RequiredArgsConstructor
 public class TraderServiceImpl implements TraderService {
 
-    @Autowired
-    private TraderRepository traderRepository;
+    private final TraderRepository traderRepository;
+    private final TraderMapper traderMapper;
+    private final MessageService messageService;
 
     @Override
-    public Trader createTrader(TraderDto traderDto) {
-        Trader trader = new Trader();
-        trader.setName(traderDto.getName());
-        trader.setContactInfo(traderDto.getContactInfo());
-        trader.setStatus("Active");
-        return traderRepository.save(trader);
+    public GenericResponse<String> createTrader(TraderDto traderDto) {
+        if(traderRepository.existsByPhoneNumberAndDeleted(traderDto.getPhoneNumber(), false))
+            throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.phone.err.msg"), DUPLICATE_TRADER_PHONE_NUMBER_ERR_CODE);
+
+        if(traderRepository.existsByEmailAndDeleted(traderDto.getEmail(), false))
+            throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.email.err.msg"), DUPLICATE_TRADER_EMAIL_ERR_CODE);
+
+        Trader trader = traderMapper.toEntity(traderDto);
+        trader.setDeleted(false);
+        trader.setStatus(ACTIVE_STATUS);
+        traderRepository.save(trader);
+        return GenericResponse.successResponseWithoutData(Messages.TRADER_CREATED_SUCCESSFULLY);
     }
 
     @Override
@@ -33,7 +53,7 @@ public class TraderServiceImpl implements TraderService {
     public Trader updateTrader(Long id, TraderDto traderDto) {
         Trader trader = traderRepository.findById(id).orElseThrow();
         trader.setName(traderDto.getName());
-        trader.setContactInfo(traderDto.getContactInfo());
+        //trader.setContactInfo(traderDto.getContactInfo());
         return traderRepository.save(trader);
     }
 
