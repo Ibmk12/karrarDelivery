@@ -1,6 +1,7 @@
 package com.karrardelivery.controller;
 
 import com.karrardelivery.constant.ApiUrls;
+import com.karrardelivery.controller.spec.TraderSpec;
 import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Trader;
@@ -29,8 +30,8 @@ public class TraderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Trader>> getAllTraders() {
-        return ResponseEntity.ok(traderService.getAllTraders());
+    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec) {
+        return traderService.getAllTraders(spec);
     }
 
     @PutMapping("/{id}")

@@ -11,7 +11,8 @@ import org.springframework.data.jpa.domain.Specification;
 @And({
         @Spec(params = "name", path = "name", spec = LikeIgnoreCase.class),
         @Spec(params = "phoneNumber", path = "phoneNumber", spec = Equal.class),
-        @Spec(params = "email", path = "email", spec = LikeIgnoreCase.class)
+        @Spec(params = "email", path = "email", spec = LikeIgnoreCase.class),
+        @Spec(params = "deleted", path = "deleted", spec = Equal.class)
 })
 public interface TraderSpec extends Specification<Trader> {
 }

@@ -2,6 +2,7 @@ package com.karrardelivery.service.impl;
 
 import com.karrardelivery.constant.ErrorCodes;
 import com.karrardelivery.constant.Messages;
+import com.karrardelivery.controller.spec.TraderSpec;
 import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Trader;
@@ -20,6 +21,7 @@ import java.util.List;
 import static com.karrardelivery.constant.ErrorCodes.DUPLICATE_TRADER_EMAIL_ERR_CODE;
 import static com.karrardelivery.constant.ErrorCodes.DUPLICATE_TRADER_PHONE_NUMBER_ERR_CODE;
 import static com.karrardelivery.constant.Messages.ACTIVE_STATUS;
+import static com.karrardelivery.constant.Messages.DATA_FETCHED_SUCCESSFULLY;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +47,9 @@ public class TraderServiceImpl implements TraderService {
     }
 
     @Override
-    public List<Trader> getAllTraders() {
-        return traderRepository.findAll();
+    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec) {
+        List<TraderDto> result = traderMapper.toDtoList(traderRepository.findAll(spec));
+        return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
     }
 
     @Override
