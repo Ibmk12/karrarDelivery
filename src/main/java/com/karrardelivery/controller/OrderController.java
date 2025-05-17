@@ -34,7 +34,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders(OrderSpec spec) {
+    public ResponseEntity<List<OrderDto>> getAllOrders(OrderSpec spec) {
         return ResponseEntity.ok(orderService.getAllOrders(spec));
     }
 

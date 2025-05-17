@@ -8,6 +8,7 @@ import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.entity.enums.EEmirate;
+import com.karrardelivery.mapper.OrderMapper;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.OrderService;
@@ -39,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final TraderRepository traderRepository;
 
+    private final OrderMapper orderMapper;
+
     @Override
     public Order createOrder(OrderDto orderDto) {
         Order order = new Order();
@@ -64,9 +67,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrders(OrderSpec spec) {
+    public List<OrderDto> getAllOrders(OrderSpec spec) {
         Specification<Order> specification = Specification.where(spec);
-        return orderRepository.findAll(specification);
+        List<Order> orderList = orderRepository.findAll(specification);
+        List<OrderDto> result = orderMapper.toDtoList(orderList);
+        return result;
     }
 
     @Override
