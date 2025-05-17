@@ -12,11 +12,14 @@ import com.karrardelivery.repository.EmirateRepository;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.OrderService;
+import com.karrardelivery.spec.OrderSpec;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +34,12 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    TraderRepository traderRepository;
+    private final TraderRepository traderRepository;
 
     @Override
     public Order createOrder(OrderDto orderDto) {
@@ -64,8 +66,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public List<Order> getAllOrders(OrderSpec spec) {
+        Specification<Order> specification = Specification.where(spec);
+        return orderRepository.findAll(specification);
     }
 
     @Override

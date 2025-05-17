@@ -4,6 +4,7 @@ import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.dto.ReportDto;
 import com.karrardelivery.entity.Order;
+import com.karrardelivery.spec.OrderSpec;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +17,7 @@ public interface OrderService {
     Order updateOrder(Long id, OrderDto orderDto);
     void deleteOrder(Long id);
     Order createOrder(OrderDto orderDto);
-    List<Order> getAllOrders();
+    List<Order> getAllOrders(OrderSpec spec);
     List<OrderReportDto> getTraderReport(ReportDto reportDto);
     ResponseEntity<Void> exportExcelTemplate(HttpServletResponse response) throws IOException;
     void saveOrdersFromFile(MultipartFile file) throws IOException;

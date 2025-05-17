@@ -5,7 +5,9 @@ import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.dto.ReportDto;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.service.OrderService;
+import com.karrardelivery.spec.OrderSpec;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +21,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/orders")
 @Slf4j
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody OrderDto orderDto) {
@@ -30,8 +32,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    public ResponseEntity<List<Order>> getAllOrders(OrderSpec spec) {
+        return ResponseEntity.ok(orderService.getAllOrders(spec));
     }
 
     @PutMapping("/{id}")
