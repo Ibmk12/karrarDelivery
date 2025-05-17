@@ -18,9 +18,9 @@ public class OrderDto {
     private String address;
     private String longitude;
     private String latitude;
-    private EEmirate emirate;
+    private String emirate;
     private Long traderId;
-    private EDeliveryStatus deliveryStatus;
+    private String deliveryStatus;
     private Double totalAmount;
     private Double traderAmount;
     private Double deliveryAmount;

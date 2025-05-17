@@ -55,10 +55,10 @@ public class OrderServiceImpl implements OrderService {
         order.setNetCompanyAmount(orderDto.getNetCompanyAmount());
         order.setCustomerPhoneNo(orderDto.getCustomerPhoneNo());
         order.setComment(orderDto.getComment());
-        order.setDeliveryStatus(orderDto.getDeliveryStatus());
+        order.setDeliveryStatus(EDeliveryStatus.valueOf(orderDto.getDeliveryStatus()));
         order.setDeliveryDate(orderDto.getDeliveryDate());
         order.setOrderDate(orderDto.getOrderDate());
-        order.setEmirate(orderDto.getEmirate());
+        order.setEmirate(EEmirate.valueOf(orderDto.getEmirate()));
         order.setTrader(traderRepository.getReferenceById(orderDto.getTraderId()));
         return orderRepository.save(order);
     }
