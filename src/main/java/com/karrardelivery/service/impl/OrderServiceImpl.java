@@ -7,6 +7,7 @@ import com.karrardelivery.dto.ReportDto;
 import com.karrardelivery.entity.Emirate;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
+import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.entity.enums.EEmirate;
 import com.karrardelivery.repository.EmirateRepository;
 import com.karrardelivery.repository.OrderRepository;
@@ -57,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
         order.setNetCompanyAmount(orderDto.getNetCompanyAmount());
         order.setCustomerPhoneNo(orderDto.getCustomerPhoneNo());
         order.setComment(orderDto.getComment());
-        order.setStatus(Constants.ORDER_STATUS.UNDER_DELIVERY);
+        order.setDeliveryStatus(orderDto.getDeliveryStatus());
         order.setDeliveryDate(orderDto.getDeliveryDate());
         order.setOrderDate(orderDto.getOrderDate());
         order.setEmirate(orderDto.getEmirate());
@@ -163,7 +164,7 @@ public class OrderServiceImpl implements OrderService {
             dto.setDeliveryAmount(order.getDeliveryAmount());
             dto.setTraderAmount(order.getTraderAmount());
             dto.setNo(order.getId());
-            dto.setStatus(order.getStatus());
+            dto.setStatus(order.getDeliveryStatus().name());
 
             reportDtos.add(dto);
         }
@@ -265,7 +266,7 @@ public class OrderServiceImpl implements OrderService {
                 if (columnMapping.containsKey("Status")) {
                     Cell statusCell = row.getCell(columnMapping.get("Status"));
                         String orderStatus = statusCell == null? Constants.ORDER_STATUS.UNDER_DELIVERY: String.valueOf(statusCell.getStringCellValue());
-                        order.setStatus(Constants.ORDER_STATUS.getOrderStatus(orderStatus));
+                        order.setDeliveryStatus(EDeliveryStatus.PENDING);
                 }
 
                 if (columnMapping.containsKey("Delivery Agent")) {
