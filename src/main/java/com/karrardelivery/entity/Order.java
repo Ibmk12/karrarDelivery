@@ -6,6 +6,7 @@ import com.karrardelivery.entity.enums.EEmirate;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -49,4 +50,8 @@ public class Order {
     private String customerPhoneNo;
     private String comment;
 
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_updated", nullable = false)
+    private Date lastUpdated;
 }
