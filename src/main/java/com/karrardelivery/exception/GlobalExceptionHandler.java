@@ -61,6 +61,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorListDto);
     }
 
+    @ExceptionHandler({ResourceNotFoundException.class})
+    public ResponseEntity<ErrorListDto> handleResourceNotFoundException(ResourceNotFoundException e) {
+        log.error("Inside handleResourceNotFoundException - message: {}", e.getMessage(), e);
+
+        ErrorDto errorDto = ErrorDto.builder()
+                .errorCode(e.getCode())
+                .errorMessage(e.getMessage())
+                .build();
+
+        ErrorListDto errorListDto = new ErrorListDto();
+        errorListDto.getErrorDtoList().add(errorDto);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorListDto);
+    }
+
     private ErrorDto mapToErrorDto(FieldError fieldError) {
         return ErrorDto.builder()
                 .errorCode(VALIDATION_ERR_CODE)

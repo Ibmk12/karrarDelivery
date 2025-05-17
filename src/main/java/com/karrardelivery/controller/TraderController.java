@@ -34,6 +34,11 @@ public class TraderController {
         return traderService.getAllTraders(spec);
     }
 
+    @GetMapping("/{id}")
+    public GenericResponse<TraderDto> getTraderById(@PathVariable Long id) {
+        return traderService.getTraderById(id);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Trader> updateTrader(@PathVariable Long id, @RequestBody TraderDto traderDto) {
         return ResponseEntity.ok(traderService.updateTrader(id, traderDto));

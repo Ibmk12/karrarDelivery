@@ -7,6 +7,7 @@ import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.exception.DuplicateResourceException;
+import com.karrardelivery.exception.ResourceNotFoundException;
 import com.karrardelivery.mapper.TraderMapper;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.MessageService;
@@ -18,8 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.karrardelivery.constant.ErrorCodes.DUPLICATE_TRADER_EMAIL_ERR_CODE;
-import static com.karrardelivery.constant.ErrorCodes.DUPLICATE_TRADER_PHONE_NUMBER_ERR_CODE;
+import static com.karrardelivery.constant.ErrorCodes.*;
 import static com.karrardelivery.constant.Messages.ACTIVE_STATUS;
 import static com.karrardelivery.constant.Messages.DATA_FETCHED_SUCCESSFULLY;
 
@@ -49,6 +49,17 @@ public class TraderServiceImpl implements TraderService {
     @Override
     public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec) {
         List<TraderDto> result = traderMapper.toDtoList(traderRepository.findAll(spec));
+        return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
+    }
+
+    @Override
+    public GenericResponse<TraderDto> getTraderById(Long id) {
+        Trader trader = traderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("trader.not.found.err.msg"),
+                        TRADER_NOT_FOUND_ERR_CODE));
+
+        TraderDto result = traderMapper.toDto(trader);
         return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
     }
 
