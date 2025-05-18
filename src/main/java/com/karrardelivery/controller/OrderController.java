@@ -56,7 +56,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
+    @PatchMapping
     public ResponseEntity<GenericResponse<String>> updateOrdersStatus(@RequestBody UpdatedOrderStatusRequest request) {
         orderService.updateOrdersStatus(request);
         return ResponseEntity.noContent().build();
