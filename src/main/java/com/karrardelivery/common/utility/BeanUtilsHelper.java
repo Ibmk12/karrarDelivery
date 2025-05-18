@@ -35,5 +35,27 @@ public class BeanUtilsHelper {
         BeanUtils.copyProperties(source, target, emptyNames.toArray(result));
     }
 
+    public static <T extends Enum<T>> T fromString(Class<T> enumType, String value) {
+        return fromString(enumType, value, true);
+    }
 
+    public static <T extends Enum<T>> T fromString(Class<T> enumType, String value, boolean ignoreCase) {
+        if (value == null || enumType == null) {
+            return null;
+        }
+
+        for (T constant : enumType.getEnumConstants()) {
+            if (ignoreCase) {
+                if (constant.name().equalsIgnoreCase(value)) {
+                    return constant;
+                }
+            } else {
+                if (constant.name().equals(value)) {
+                    return constant;
+                }
+            }
+        }
+
+        return null;
+    }
 }

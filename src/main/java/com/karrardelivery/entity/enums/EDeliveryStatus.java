@@ -8,10 +8,10 @@ import lombok.Getter;
 public enum EDeliveryStatus {
 
     PENDING("Pending", "قيد الانتظار"),
-    IN_TRANSIT("In Transit", "قيد التوصيل"),
+    UNDER_DELIVERY("Under Delivery", "قيد التوصيل"),
     DELIVERED("Delivered", "تم التوصيل"),
     CANCELED("Canceled", "أُلغيت"),
-    RETURNED("Returned", "تم الإرجاع"),
+    EXCHANGED("Exchanged", "تم الإرجاع"),
     FAILED("Failed", "فشل التوصيل");
 
     private final String english;

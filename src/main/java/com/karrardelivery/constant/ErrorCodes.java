@@ -8,4 +8,5 @@ public class ErrorCodes {
     public static final String TRADER_NOT_FOUND_ERR_CODE = "4004";
     public static final String DUPLICATE_ORDER_ERR_CODE = "4005";
     public static final String ORDER_NOT_FOUND_ERR_CODE = "4006";
+    public static final String INVALID_DELIVERY_STATUS_ERR_CODE = "4007";
 }

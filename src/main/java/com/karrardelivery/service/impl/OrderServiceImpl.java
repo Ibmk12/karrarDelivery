@@ -1,11 +1,9 @@
 package com.karrardelivery.service.impl;
 
+import com.karrardelivery.common.utility.BeanUtilsHelper;
 import com.karrardelivery.common.utility.Constants;
 import com.karrardelivery.constant.Messages;
-import com.karrardelivery.dto.GenericResponse;
-import com.karrardelivery.dto.OrderDto;
-import com.karrardelivery.dto.OrderReportDto;
-import com.karrardelivery.dto.ReportDto;
+import com.karrardelivery.dto.*;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.entity.enums.EDeliveryStatus;
@@ -34,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 import static com.karrardelivery.constant.ErrorCodes.*;
@@ -89,6 +88,56 @@ public class OrderServiceImpl implements OrderService {
         Order order = getOrderByIdOrThrow(id);
         orderRepository.delete(order);
         GenericResponse.successResponseWithoutData(DATA_DELETED_SUCCESSFULLY);
+    }
+
+    @Override
+    public GenericResponse<String> updateOrdersStatus(UpdatedOrderStatusRequest request) {
+        List<Order> orderList = orderRepository.findByInvoiceNoIn(request.getOrderList());
+        if(orderList == null || orderList.isEmpty())
+            throw new ResourceNotFoundException(messageService.getMessage("order.not.found.err.msg"), String.join(",", request.getOrderList()));
+
+        EDeliveryStatus status = BeanUtilsHelper.fromString(EDeliveryStatus.class, request.getDeliveryStatus());
+        if(status == null)
+            throw new ResourceNotFoundException(messageService.getMessage("delivery.status.not.found.err.msg"), INVALID_DELIVERY_STATUS_ERR_CODE);
+
+        switch (status) {
+            case DELIVERED:
+                for (Order order : orderList) {
+                    order.setDeliveryStatus(EDeliveryStatus.DELIVERED);
+                    order.setDeliveryDate(Date.from(Instant.now()));
+                }
+                break;
+
+            case EXCHANGED:
+                for (Order order : orderList) {
+                    order.setDeliveryStatus(EDeliveryStatus.EXCHANGED);
+                }
+                break;
+
+            case PENDING:
+                for (Order order : orderList) {
+                    order.setDeliveryStatus(EDeliveryStatus.PENDING);
+                }
+                break;
+
+            case UNDER_DELIVERY:
+                for (Order order : orderList) {
+                    order.setDeliveryStatus(EDeliveryStatus.UNDER_DELIVERY);
+                }
+                break;
+
+            case CANCELED:
+                for (Order order : orderList) {
+                    order.setDeliveryStatus(EDeliveryStatus.CANCELED);
+                }
+                break;
+
+            case  FAILED:
+                for (Order order : orderList) {
+                    order.setDeliveryStatus(EDeliveryStatus.FAILED);
+                }
+        }
+        return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
     }
 
     public Order getOrderByIdOrThrow(Long id) {

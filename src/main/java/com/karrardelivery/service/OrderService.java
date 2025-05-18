@@ -1,9 +1,6 @@
 package com.karrardelivery.service;
 
-import com.karrardelivery.dto.GenericResponse;
-import com.karrardelivery.dto.OrderDto;
-import com.karrardelivery.dto.OrderReportDto;
-import com.karrardelivery.dto.ReportDto;
+import com.karrardelivery.dto.*;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.controller.spec.OrderSpec;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +17,7 @@ public interface OrderService {
     GenericResponse<String> createOrder(OrderDto orderDto);
     GenericResponse<List<OrderDto>> getAllOrders(OrderSpec spec);
     GenericResponse<OrderDto> getOrderById(Long id);
+    GenericResponse<String> updateOrdersStatus(UpdatedOrderStatusRequest request);
     List<OrderReportDto> getTraderReport(ReportDto reportDto);
     ResponseEntity<Void> exportExcelTemplate(HttpServletResponse response) throws IOException;
     void saveOrdersFromFile(MultipartFile file) throws IOException;

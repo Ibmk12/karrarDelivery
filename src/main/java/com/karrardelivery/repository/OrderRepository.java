@@ -13,4 +13,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
 
     boolean existsByInvoiceNo(String invoiceNo);
     List<Order> findByTraderIdAndOrderDateBetween(Long traderId, Date startDate, Date endDate);
+    List<Order> findByInvoiceNoIn(List<String> invoiceNos);
 }

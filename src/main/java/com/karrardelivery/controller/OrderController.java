@@ -1,10 +1,7 @@
 package com.karrardelivery.controller;
 
 import com.karrardelivery.constant.ApiUrls;
-import com.karrardelivery.dto.GenericResponse;
-import com.karrardelivery.dto.OrderDto;
-import com.karrardelivery.dto.OrderReportDto;
-import com.karrardelivery.dto.ReportDto;
+import com.karrardelivery.dto.*;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.service.OrderService;
 import com.karrardelivery.controller.spec.OrderSpec;
@@ -56,6 +53,12 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<GenericResponse<String>> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GenericResponse<String>> updateOrdersStatus(@RequestBody UpdatedOrderStatusRequest request) {
+        orderService.updateOrdersStatus(request);
         return ResponseEntity.noContent().build();
     }
 
