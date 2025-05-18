@@ -1,6 +1,5 @@
 package com.karrardelivery.service.impl;
 
-import com.karrardelivery.constant.ErrorCodes;
 import com.karrardelivery.constant.Messages;
 import com.karrardelivery.controller.spec.TraderSpec;
 import com.karrardelivery.dto.GenericResponse;
@@ -14,13 +13,8 @@ import com.karrardelivery.service.MessageService;
 import com.karrardelivery.service.TraderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-
 import static com.karrardelivery.constant.ErrorCodes.*;
 import static com.karrardelivery.constant.Messages.*;
 
@@ -55,21 +49,14 @@ public class TraderServiceImpl implements TraderService {
 
     @Override
     public GenericResponse<TraderDto> getTraderById(Long id) {
-        Trader trader = traderRepository.findByIdAndDeleted(id, false)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        messageService.getMessage("trader.not.found.err.msg"),
-                        TRADER_NOT_FOUND_ERR_CODE));
-
+        Trader trader = getActiveTraderByIdOrThrow(id);
         TraderDto result = traderMapper.toDto(trader);
         return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
     }
 
     @Override
     public GenericResponse<String> updateTrader(Long id, TraderDto traderDto) {
-        Trader trader = traderRepository.findByIdAndDeleted(id, false)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        messageService.getMessage("trader.not.found.err.msg"),
-                        TRADER_NOT_FOUND_ERR_CODE));
+        Trader trader = getActiveTraderByIdOrThrow(id);
 
         if(traderRepository.existsByPhoneNumberAndDeletedAndIdNot(traderDto.getPhoneNumber(), false, id)) {
             throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.phone.err.msg"), DUPLICATE_TRADER_PHONE_NUMBER_ERR_CODE);
@@ -86,11 +73,16 @@ public class TraderServiceImpl implements TraderService {
     @Override
     @Transactional
     public GenericResponse<String> deleteTrader(Long id) {
-        Trader trader = traderRepository.findByIdAndDeleted(id, false)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        messageService.getMessage("trader.not.found.err.msg"),
-                        TRADER_NOT_FOUND_ERR_CODE));
+        Trader trader = getActiveTraderByIdOrThrow(id);
         trader.setDeleted(true);
         return GenericResponse.successResponseWithoutData(DATA_DELETED_SUCCESSFULLY);
+    }
+
+    public Trader getActiveTraderByIdOrThrow(Long traderId) {
+        return traderRepository.findByIdAndDeleted(traderId, false)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("trader.not.found.err.msg"),
+                        TRADER_NOT_FOUND_ERR_CODE
+                ));
     }
 }

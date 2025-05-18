@@ -37,8 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.karrardelivery.constant.ErrorCodes.*;
-import static com.karrardelivery.constant.Messages.DATA_FETCHED_SUCCESSFULLY;
-import static com.karrardelivery.constant.Messages.DATA_UPDATED_SUCCESSFULLY;
+import static com.karrardelivery.constant.Messages.*;
 
 @Service
 @Slf4j
@@ -55,11 +54,7 @@ public class OrderServiceImpl implements OrderService {
         if(orderRepository.existsByInvoiceNo(orderDto.getInvoiceNo()))
             throw new DuplicateResourceException(String.format(messageService.getMessage("duplicate.order.err.msg"), orderDto.getInvoiceNo()), DUPLICATE_ORDER_ERR_CODE);
 
-        Trader trader = traderRepository.findByIdAndDeleted(orderDto.getTraderId(), false)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        messageService.getMessage("trader.not.found.err.msg"),
-                        TRADER_NOT_FOUND_ERR_CODE));
-
+        Trader trader = getActiveTraderByIdOrThrow(orderDto.getTraderId());
         Order order = orderMapper.toEntity(orderDto);
         order.setTrader(trader);
         orderRepository.save(order);
@@ -76,22 +71,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public GenericResponse<OrderDto> getOrderById(Long id) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format(messageService.getMessage("order.not.found.err.msg"), id),
-                        ORDER_NOT_FOUND_ERR_CODE
-                ));
+        Order order = getOrderByIdOrThrow(id);
         OrderDto result = orderMapper.toDto(order);
         return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
     }
 
     @Override
     public GenericResponse<String> updateOrder(Long id, OrderDto orderDto) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format(messageService.getMessage("order.not.found.err.msg"), id),
-                        ORDER_NOT_FOUND_ERR_CODE
-                ));
+        Order order = getOrderByIdOrThrow(id);
         orderMapper.mapToUpdate(order, orderDto);
         orderRepository.save(order);
         return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
@@ -99,7 +86,25 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
+        Order order = getOrderByIdOrThrow(id);
+        orderRepository.delete(order);
+        GenericResponse.successResponseWithoutData(DATA_DELETED_SUCCESSFULLY);
+    }
+
+    public Order getOrderByIdOrThrow(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(messageService.getMessage("order.not.found.err.msg"), id),
+                        ORDER_NOT_FOUND_ERR_CODE
+                ));
+    }
+
+    public Trader getActiveTraderByIdOrThrow(Long traderId) {
+        return traderRepository.findByIdAndDeleted(traderId, false)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("trader.not.found.err.msg"),
+                        TRADER_NOT_FOUND_ERR_CODE
+                ));
     }
 
 //    public void exportTraderReport(Long traderId, LocalDate startDate, LocalDate endDate, ServletOutputStream outputStream) throws IOException {
