@@ -38,6 +38,7 @@ import java.util.*;
 
 import static com.karrardelivery.constant.ErrorCodes.*;
 import static com.karrardelivery.constant.Messages.DATA_FETCHED_SUCCESSFULLY;
+import static com.karrardelivery.constant.Messages.DATA_UPDATED_SUCCESSFULLY;
 
 @Service
 @Slf4j
@@ -85,18 +86,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order updateOrder(Long id, OrderDto orderDto) {
-        Order order = orderRepository.findById(id).orElseThrow();
-        Optional.ofNullable(orderDto.getInvoiceNo()).ifPresent(order::setInvoiceNo);
-        Optional.ofNullable(orderDto.getDeliveryAgent()).ifPresent(order::setDeliveryAgent);
-        Optional.ofNullable(orderDto.getTotalAmount()).ifPresent(order::setTotalAmount);
-        Optional.ofNullable(orderDto.getTraderAmount()).ifPresent(order::setTraderAmount);
-        Optional.ofNullable(orderDto.getDeliveryAmount()).ifPresent(order::setDeliveryAmount);
-        Optional.ofNullable(orderDto.getAgentAmount()).ifPresent(order::setDeliveryAmount);
-        Optional.ofNullable(orderDto.getNetCompanyAmount()).ifPresent(order::setNetCompanyAmount);
-        Optional.ofNullable(orderDto.getCustomerPhoneNo()).ifPresent(order::setCustomerPhoneNo);
-        Optional.ofNullable(orderDto.getComment()).ifPresent(order::setComment);
-        return orderRepository.save(order);
+    public GenericResponse<String> updateOrder(Long id, OrderDto orderDto) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(messageService.getMessage("order.not.found.err.msg"), id),
+                        ORDER_NOT_FOUND_ERR_CODE
+                ));
+        orderMapper.mapToUpdate(order, orderDto);
+        orderRepository.save(order);
+        return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
     }
 
     @Override

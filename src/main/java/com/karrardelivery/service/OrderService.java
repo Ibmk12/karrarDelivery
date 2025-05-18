@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    Order updateOrder(Long id, OrderDto orderDto);
+    GenericResponse<String> updateOrder(Long id, OrderDto orderDto);
     void deleteOrder(Long id);
     GenericResponse<String> createOrder(OrderDto orderDto);
     GenericResponse<List<OrderDto>> getAllOrders(OrderSpec spec);

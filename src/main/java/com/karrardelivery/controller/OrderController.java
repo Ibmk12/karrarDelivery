@@ -48,8 +48,9 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody OrderDto orderDto) {
-        return ResponseEntity.ok(orderService.updateOrder(id, orderDto));
+    public ResponseEntity<GenericResponse<String>> updateOrder(@PathVariable Long id, @RequestBody OrderDto orderDto) {
+        orderService.updateOrder(id, orderDto);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
@@ -58,41 +59,4 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-//    @GetMapping("/export")
-//    public ResponseEntity<Void> exportTraderReportToExcel(@RequestParam Long traderId,
-//                                                          @RequestParam String startDate,
-//                                                          @RequestParam String endDate,
-//                                                          HttpServletResponse response) throws IOException {
-//        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-//        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=trader_report.xlsx");
-//
-//        LocalDate start = LocalDate.parse(startDate);
-//        LocalDate end = LocalDate.parse(endDate);
-//        orderService.exportTraderReport(traderId, start, end, response.getOutputStream());
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
-    @GetMapping("/report")
-    public ResponseEntity<List<OrderReportDto>> getTraderReport(@RequestBody ReportDto reportDto) throws Exception{
-        List<OrderReportDto> report = orderService.getTraderReport(reportDto);
-
-        return ResponseEntity.ok(report);
-    }
-
-    @GetMapping("/export-template")
-    public ResponseEntity<Void> exportOrderTemplate(HttpServletResponse response) throws IOException {
-        return orderService.exportExcelTemplate(response);
-    }
-
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadOrders(@RequestParam("file") MultipartFile file) {
-        try {
-            log.info("Received uploadOrders request: {}", file);
-            orderService.saveOrdersFromFile(file);
-            return ResponseEntity.status(HttpStatus.OK).body("Orders uploaded successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to upload orders: " + e.getMessage());
-        }
-    }
 }
