@@ -56,6 +56,7 @@ public class OrderServiceImpl implements OrderService {
         Trader trader = getActiveTraderByIdOrThrow(orderDto.getTraderId());
         Order order = orderMapper.toEntity(orderDto);
         order.setTrader(trader);
+        calculateOrderAmounts(order);
         orderRepository.save(order);
         return GenericResponse.successResponseWithoutData(Messages.ORDER_CREATED_SUCCESSFULLY);
     }
@@ -79,6 +80,7 @@ public class OrderServiceImpl implements OrderService {
     public GenericResponse<String> updateOrder(Long id, OrderDto orderDto) {
         Order order = getOrderByIdOrThrow(id);
         orderMapper.mapToUpdate(order, orderDto);
+        calculateOrderAmounts(order);
         orderRepository.save(order);
         return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
     }
@@ -90,15 +92,29 @@ public class OrderServiceImpl implements OrderService {
         GenericResponse.successResponseWithoutData(DATA_DELETED_SUCCESSFULLY);
     }
 
+    private void calculateOrderAmounts(Order order) {
+        Double traderAmount = order.getTraderAmount() != null ? order.getTraderAmount() : 0.0;
+        Double deliveryAmount = order.getDeliveryAmount() != null ? order.getDeliveryAmount() : 0.0;
+        Double agentAmount = order.getAgentAmount() != null ? order.getAgentAmount() : 0.0;
+
+        order.setTotalAmount(traderAmount + deliveryAmount);
+        order.setNetCompanyAmount(deliveryAmount - agentAmount);
+    }
+
     @Override
+    @Transactional
     public GenericResponse<String> updateOrdersStatus(UpdatedOrderStatusRequest request) {
         List<Order> orderList = orderRepository.findByInvoiceNoIn(request.getOrderList());
         if(orderList == null || orderList.isEmpty())
-            throw new ResourceNotFoundException(messageService.getMessage("order.not.found.err.msg"), String.join(",", request.getOrderList()));
+            throw new ResourceNotFoundException(
+                    String.format(messageService.getMessage("order.not.found.err.msg"), String.join(",", request.getOrderList())),
+                    ORDER_NOT_FOUND_ERR_CODE);
 
         EDeliveryStatus status = BeanUtilsHelper.fromString(EDeliveryStatus.class, request.getDeliveryStatus());
         if(status == null)
-            throw new ResourceNotFoundException(messageService.getMessage("delivery.status.not.found.err.msg"), INVALID_DELIVERY_STATUS_ERR_CODE);
+            throw new ResourceNotFoundException(
+                    String.format(messageService.getMessage("delivery.status.not.found.err.msg"), request.getDeliveryStatus()),
+                    INVALID_DELIVERY_STATUS_ERR_CODE);
 
         switch (status) {
             case DELIVERED:
