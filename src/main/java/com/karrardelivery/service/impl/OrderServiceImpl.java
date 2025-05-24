@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.karrardelivery.constant.ErrorCodes.*;
@@ -120,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
             case DELIVERED:
                 for (Order order : orderList) {
                     order.setDeliveryStatus(EDeliveryStatus.DELIVERED);
-                    order.setDeliveryDate(Date.from(Instant.now()));
+                    order.setDeliveryDate(LocalDateTime.now());
                 }
                 break;
 
@@ -236,15 +237,15 @@ public class OrderServiceImpl implements OrderService {
         Long no = 1L;
         for (Order order : orders) {
             OrderReportDto dto = new OrderReportDto();
-            dto.setNo(no++);
-            dto.setOrderDate(order.getOrderDate());
-            dto.setInvoiceNo(order.getInvoiceNo());
-            dto.setEmirate(order.getEmirate());
-            dto.setTotalAmount(order.getTotalAmount());
-            dto.setDeliveryAmount(order.getDeliveryAmount());
-            dto.setTraderAmount(order.getTraderAmount());
-            dto.setNo(order.getId());
-            dto.setStatus(order.getDeliveryStatus().name());
+//            dto.setNo(no++);
+//            dto.setOrderDate(order.getOrderDate());
+//            dto.setInvoiceNo(order.getInvoiceNo());
+//            dto.setEmirate(order.getEmirate());
+//            dto.setTotalAmount(order.getTotalAmount());
+//            dto.setDeliveryAmount(order.getDeliveryAmount());
+//            dto.setTraderAmount(order.getTraderAmount());
+//            dto.setNo(order.getId());
+//            dto.setStatus(order.getDeliveryStatus().name());
 
             reportDtos.add(dto);
         }
@@ -311,12 +312,12 @@ public class OrderServiceImpl implements OrderService {
                 Order order = new Order();
 
                 // Retrieve each cell value by column name
-                if (columnMapping.containsKey("Date")) {
-                    Cell orderDateCell = row.getCell(columnMapping.get("Date"));
-                    if (orderDateCell != null && orderDateCell.getCellType() == CellType.NUMERIC) {
-                        order.setOrderDate(orderDateCell.getDateCellValue());
-                    }
-                }
+//                if (columnMapping.containsKey("Date")) {
+//                    Cell orderDateCell = row.getCell(columnMapping.get("Date"));
+//                    if (orderDateCell != null && orderDateCell.getCellType() == CellType.NUMERIC) {
+//                        order.setOrderDate(orderDateCell.getDateCellValue());
+//                    }
+//                }
 
                 if (columnMapping.containsKey("Invoice No")) {
                     Cell invoiceNoCell = row.getCell(columnMapping.get("Invoice No"));

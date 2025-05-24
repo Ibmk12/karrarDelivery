@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -20,7 +21,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date orderDate;
+    private LocalDateTime orderDate;
     private String invoiceNo;
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +39,7 @@ public class Order {
 
 
     private String deliveryAgent;
-    private Date deliveryDate;
+    private LocalDateTime deliveryDate;
     private String address;
     private String longitude;
     private String latitude;
@@ -53,5 +54,5 @@ public class Order {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_updated", nullable = false)
-    private Date lastUpdated;
+    private LocalDateTime lastUpdated;
 }

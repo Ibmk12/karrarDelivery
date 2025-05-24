@@ -1,5 +1,6 @@
 package com.karrardelivery.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.entity.enums.EEmirate;
 import lombok.Getter;
@@ -14,8 +15,10 @@ public class OrderDto {
     private Long id;
     private String invoiceNo;
     private String deliveryAgent;
-    private Date orderDate;
-    private Date deliveryDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm a")
+    private LocalDateTime orderDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm a")
+    private LocalDateTime deliveryDate;
     private String address;
     private String longitude;
     private String latitude;
