@@ -7,7 +7,7 @@ CREATE TABLE trader (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     version INT,
     status VARCHAR(255),
-    last_updated DATETIME,
+    last_update DATETIME,
     creation_time DATETIME,
 
     name VARCHAR(255),

@@ -26,7 +26,7 @@ public class ExportController {
 
     private final OrderExcelExportService orderExcelExportService;
 
-    @GetMapping("/export")
+    @GetMapping
     public ResponseEntity<GenericResponse<String>> getOrderReportPerStatusReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) throws Exception {
         orderExcelExportService.exportOrdersToExcel(spec, response, request);
         return ResponseEntity.ok(GenericResponse.successResponseWithoutData("Exported successfully"));
