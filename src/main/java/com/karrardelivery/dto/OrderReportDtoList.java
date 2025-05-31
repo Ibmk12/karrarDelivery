@@ -2,6 +2,7 @@ package com.karrardelivery.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -10,14 +11,14 @@ import java.util.List;
 
 @Setter
 @Getter
+@RequiredArgsConstructor
 public class OrderReportDtoList {
 
-    private String deliverStatus;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+//    private LocalDateTime date;
     private String traderName;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime date;
-    private double grandTotal;
+    private List<OrderReportDto> orderList;
+    private double grandTotalAmount;
     private double totalDeliveryAmount;
     private double totalTraderAmount;
-    private List<OrderReportDto> orderList;
 }

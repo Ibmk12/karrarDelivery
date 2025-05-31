@@ -4,12 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -57,5 +59,24 @@ public class BeanUtilsHelper {
         }
 
         return null;
+    }
+
+    public static String getLocalizedEnumLabel(Enum<?> enumValue) {
+        if (enumValue == null) return null;
+
+        Locale locale = LocaleContextHolder.getLocale();
+        String methodName = "getEnglish"; // Default
+
+        if ("ar".equalsIgnoreCase(locale.getLanguage())) {
+            methodName = "getArabic";
+        }
+
+        try {
+            Method method = enumValue.getClass().getMethod(methodName);
+            return (String) method.invoke(enumValue);
+        } catch (Exception e) {
+            // Log the issue and fallback to enum name
+            return enumValue.name();
+        }
     }
 }

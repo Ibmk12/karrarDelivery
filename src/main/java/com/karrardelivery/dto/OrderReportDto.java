@@ -18,11 +18,11 @@ public class OrderReportDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm a")
     private LocalDateTime orderDate;
     private String invoiceNo;
-    private EEmirate emirate;
+    private String emirate;
+    private String traderName;
     private double totalAmount;
     private double deliveryAmount;
     private double traderAmount;
     private String customerPhoneNo;
     private String deliveryStatus;
-
 }

@@ -16,9 +16,8 @@ public interface OrderService {
     void deleteOrder(Long id);
     GenericResponse<String> createOrder(OrderDto orderDto);
     GenericResponse<List<OrderDto>> getAllOrders(OrderSpec spec);
+    GenericResponse<OrderReportDtoList> getOrderReport(OrderSpec spec);
+    GenericResponse<OrderReport> getOrderReportPerStatus(OrderSpec spec);
     GenericResponse<OrderDto> getOrderById(Long id);
     GenericResponse<String> updateOrdersStatus(UpdatedOrderStatusRequest request);
-    List<OrderReportDto> getTraderReport(ReportDto reportDto);
-    ResponseEntity<Void> exportExcelTemplate(HttpServletResponse response) throws IOException;
-    void saveOrdersFromFile(MultipartFile file) throws IOException;
 }

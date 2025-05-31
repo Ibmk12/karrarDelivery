@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import static com.karrardelivery.constant.ApiUrls.REPORT;
+import static com.karrardelivery.constant.ApiUrls.REPORT_STATUS;
+
 @RestController
 @RequestMapping(ApiUrls.ORDERS)
 @Slf4j
@@ -62,4 +65,13 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(REPORT)
+    public ResponseEntity<GenericResponse<OrderReportDtoList>> getOrderReport(OrderSpec spec) {
+        return ResponseEntity.ok(orderService.getOrderReport(spec));
+    }
+
+    @GetMapping(REPORT_STATUS)
+    public ResponseEntity<GenericResponse<OrderReport>> getOrderReportPerStatus(OrderSpec spec) {
+        return ResponseEntity.ok(orderService.getOrderReportPerStatus(spec));
+    }
 }
