@@ -1,0 +1,634 @@
+{
+  "info": {
+    "name": "Karrar Delivery API Collection",
+    "_postman_id": "karrar-collection-2025-05-31T17:19:31.975210",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceNo\": \"INV-001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get All Orders (with filters)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "deliveryStatus",
+                  "value": ""
+                },
+                {
+                  "key": "deliveryAgent",
+                  "value": ""
+                },
+                {
+                  "key": "invoiceNo",
+                  "value": ""
+                },
+                {
+                  "key": "customerPhoneNo",
+                  "value": ""
+                },
+                {
+                  "key": "address",
+                  "value": ""
+                },
+                {
+                  "key": "traderName",
+                  "value": ""
+                },
+                {
+                  "key": "traderPhoneNumber",
+                  "value": ""
+                },
+                {
+                  "key": "email",
+                  "value": ""
+                },
+                {
+                  "key": "fromOrderDate",
+                  "value": ""
+                },
+                {
+                  "key": "toOrderDate",
+                  "value": ""
+                },
+                {
+                  "key": "fromDeliveryDate",
+                  "value": ""
+                },
+                {
+                  "key": "toDeliveryDate",
+                  "value": ""
+                },
+                {
+                  "key": "fromLastUpdated",
+                  "value": ""
+                },
+                {
+                  "key": "toLastUpdated",
+                  "value": ""
+                },
+                {
+                  "key": "fromTotalAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toTotalAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromTraderAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toTraderAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromDeliveryAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toDeliveryAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromAgentAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toAgentAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromNetCompanyAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toNetCompanyAmount",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Order By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "1"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Update Order",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "1"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceNo\": \"UPDATED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Order",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "1"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Patch Orders Status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderList\": [\n    1,\n    2\n  ],\n  \"status\": \"DELIVERED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Order Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "report"
+              ],
+              "query": [
+                {
+                  "key": "deliveryStatus",
+                  "value": ""
+                },
+                {
+                  "key": "deliveryAgent",
+                  "value": ""
+                },
+                {
+                  "key": "invoiceNo",
+                  "value": ""
+                },
+                {
+                  "key": "customerPhoneNo",
+                  "value": ""
+                },
+                {
+                  "key": "address",
+                  "value": ""
+                },
+                {
+                  "key": "traderName",
+                  "value": ""
+                },
+                {
+                  "key": "traderPhoneNumber",
+                  "value": ""
+                },
+                {
+                  "key": "email",
+                  "value": ""
+                },
+                {
+                  "key": "fromOrderDate",
+                  "value": ""
+                },
+                {
+                  "key": "toOrderDate",
+                  "value": ""
+                },
+                {
+                  "key": "fromDeliveryDate",
+                  "value": ""
+                },
+                {
+                  "key": "toDeliveryDate",
+                  "value": ""
+                },
+                {
+                  "key": "fromLastUpdated",
+                  "value": ""
+                },
+                {
+                  "key": "toLastUpdated",
+                  "value": ""
+                },
+                {
+                  "key": "fromTotalAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toTotalAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromTraderAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toTraderAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromDeliveryAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toDeliveryAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromAgentAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toAgentAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromNetCompanyAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toNetCompanyAmount",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Order Report Per Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/report/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "report",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "deliveryStatus",
+                  "value": ""
+                },
+                {
+                  "key": "deliveryAgent",
+                  "value": ""
+                },
+                {
+                  "key": "invoiceNo",
+                  "value": ""
+                },
+                {
+                  "key": "customerPhoneNo",
+                  "value": ""
+                },
+                {
+                  "key": "address",
+                  "value": ""
+                },
+                {
+                  "key": "traderName",
+                  "value": ""
+                },
+                {
+                  "key": "traderPhoneNumber",
+                  "value": ""
+                },
+                {
+                  "key": "email",
+                  "value": ""
+                },
+                {
+                  "key": "fromOrderDate",
+                  "value": ""
+                },
+                {
+                  "key": "toOrderDate",
+                  "value": ""
+                },
+                {
+                  "key": "fromDeliveryDate",
+                  "value": ""
+                },
+                {
+                  "key": "toDeliveryDate",
+                  "value": ""
+                },
+                {
+                  "key": "fromLastUpdated",
+                  "value": ""
+                },
+                {
+                  "key": "toLastUpdated",
+                  "value": ""
+                },
+                {
+                  "key": "fromTotalAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toTotalAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromTraderAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toTraderAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromDeliveryAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toDeliveryAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromAgentAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toAgentAmount",
+                  "value": ""
+                },
+                {
+                  "key": "fromNetCompanyAmount",
+                  "value": ""
+                },
+                {
+                  "key": "toNetCompanyAmount",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Traders",
+      "item": [
+        {
+          "name": "Create Trader",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/traders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "traders"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Trader\",\n  \"phoneNumber\": \"1234567890\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get All Traders (with filters)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/traders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "traders"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": ""
+                },
+                {
+                  "key": "phoneNumber",
+                  "value": ""
+                },
+                {
+                  "key": "email",
+                  "value": ""
+                },
+                {
+                  "key": "deleted",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Trader By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/traders/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "traders",
+                "1"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Update Trader",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/traders/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "traders",
+                "1"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Trader\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Trader",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/traders/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "traders",
+                "1"
+              ],
+              "query": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
