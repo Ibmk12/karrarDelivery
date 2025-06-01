@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class TraderDto {
 
+    private Long id;
+
     @NotBlank(message = "Name is required")
     private String name;
 

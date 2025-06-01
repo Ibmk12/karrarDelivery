@@ -1,6 +1,7 @@
 package com.karrardelivery.mapper;
 
 import com.karrardelivery.dto.OrderDto;
+import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
@@ -13,6 +14,13 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface TraderMapper extends IBaseMapper<Trader, TraderDto> {
+
+
+    @Mappings({
+            @Mapping(target = "id", source = "id")
+    })
+    @Override
+    TraderDto toDto(Trader trader);
 
     @Override
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

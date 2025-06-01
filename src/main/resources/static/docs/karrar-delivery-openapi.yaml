@@ -4,18 +4,13 @@ info:
   version: 1.0.0
   description: Auto-generated OpenAPI spec from Postman collection
 servers:
-- url: http://localhost:8080
-  description: Local server
+  - url: http://localhost:8080
+    description: Local server
 paths:
   /api/v1/orders:
     post:
       summary: Create Order
-      tags:
-      - Orders
-      parameters: []
-      responses:
-        '200':
-          description: Successful Response
+      tags: [Orders]
       requestBody:
         required: true
         content:
@@ -24,170 +19,126 @@ paths:
               type: object
             example:
               invoiceNo: INV-001
+      responses:
+        '200':
+          description: Successful Response
     get:
       summary: Get All Orders (with filters)
-      tags:
-      - Orders
+      tags: [Orders]
       parameters:
-      - name: deliveryStatus
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: deliveryAgent
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: invoiceNo
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: customerPhoneNo
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: address
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: traderName
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: traderPhoneNumber
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: email
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromOrderDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toOrderDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromDeliveryDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toDeliveryDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromLastUpdated
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toLastUpdated
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromTotalAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toTotalAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromTraderAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toTraderAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromDeliveryAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toDeliveryAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromAgentAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toAgentAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromNetCompanyAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toNetCompanyAmount
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: deliveryStatus
+          in: query
+          schema: { type: string }
+        - name: deliveryAgent
+          in: query
+          schema: { type: string }
+        - name: invoiceNo
+          in: query
+          schema: { type: string }
+        - name: customerPhoneNo
+          in: query
+          schema: { type: string }
+        - name: address
+          in: query
+          schema: { type: string }
+        - name: traderName
+          in: query
+          schema: { type: string }
+        - name: traderPhoneNumber
+          in: query
+          schema: { type: string }
+        - name: email
+          in: query
+          schema: { type: string }
+        - name: fromOrderDate
+          in: query
+          schema: { type: string }
+        - name: toOrderDate
+          in: query
+          schema: { type: string }
+        - name: fromDeliveryDate
+          in: query
+          schema: { type: string }
+        - name: toDeliveryDate
+          in: query
+          schema: { type: string }
+        - name: fromLastUpdated
+          in: query
+          schema: { type: string }
+        - name: toLastUpdated
+          in: query
+          schema: { type: string }
+        - name: fromTotalAmount
+          in: query
+          schema: { type: string }
+        - name: toTotalAmount
+          in: query
+          schema: { type: string }
+        - name: fromTraderAmount
+          in: query
+          schema: { type: string }
+        - name: toTraderAmount
+          in: query
+          schema: { type: string }
+        - name: fromDeliveryAmount
+          in: query
+          schema: { type: string }
+        - name: toDeliveryAmount
+          in: query
+          schema: { type: string }
+        - name: fromAgentAmount
+          in: query
+          schema: { type: string }
+        - name: toAgentAmount
+          in: query
+          schema: { type: string }
+        - name: fromNetCompanyAmount
+          in: query
+          schema: { type: string }
+        - name: toNetCompanyAmount
+          in: query
+          schema: { type: string }
       responses:
         '200':
           description: Successful Response
     patch:
       summary: Patch Orders Status
-      tags:
-      - Orders
-      parameters: []
-      responses:
-        '200':
-          description: Successful Response
+      tags: [Orders]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-            example:
-              orderList:
-              - 1
-              - 2
-              status: DELIVERED
-  /api/v1/orders/1:
+              properties:
+                orderList:
+                  type: array
+                  items:
+                    type: integer
+                status:
+                  type: string
+              example:
+                orderList: [1, 2]
+                status: DELIVERED
+      responses:
+        '200':
+          description: Successful Response
+
+  /api/v1/orders/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
     get:
       summary: Get Order By ID
-      tags:
-      - Orders
-      parameters: []
+      tags: [Orders]
       responses:
         '200':
           description: Successful Response
     put:
       summary: Update Order
-      tags:
-      - Orders
-      parameters: []
-      responses:
-        '200':
-          description: Successful Response
+      tags: [Orders]
       requestBody:
         required: true
         content:
@@ -196,281 +147,182 @@ paths:
               type: object
             example:
               invoiceNo: UPDATED
-    delete:
-      summary: Delete Order
-      tags:
-      - Orders
-      parameters: []
       responses:
         '200':
           description: Successful Response
+    delete:
+      summary: Delete Order
+      tags: [Orders]
+      responses:
+        '200':
+          description: Successful Response
+
   /api/v1/orders/report:
     get:
       summary: Order Report
-      tags:
-      - Orders
+      tags: [Orders]
       parameters:
-      - name: deliveryStatus
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: deliveryAgent
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: invoiceNo
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: customerPhoneNo
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: address
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: traderName
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: traderPhoneNumber
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: email
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromOrderDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toOrderDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromDeliveryDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toDeliveryDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromLastUpdated
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toLastUpdated
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromTotalAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toTotalAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromTraderAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toTraderAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromDeliveryAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toDeliveryAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromAgentAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toAgentAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromNetCompanyAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toNetCompanyAmount
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: deliveryStatus
+          in: query
+          schema: { type: string }
+        - name: deliveryAgent
+          in: query
+          schema: { type: string }
+        - name: invoiceNo
+          in: query
+          schema: { type: string }
+        - name: customerPhoneNo
+          in: query
+          schema: { type: string }
+        - name: address
+          in: query
+          schema: { type: string }
+        - name: traderName
+          in: query
+          schema: { type: string }
+        - name: traderPhoneNumber
+          in: query
+          schema: { type: string }
+        - name: email
+          in: query
+          schema: { type: string }
+        - name: fromOrderDate
+          in: query
+          schema: { type: string }
+        - name: toOrderDate
+          in: query
+          schema: { type: string }
+        - name: fromDeliveryDate
+          in: query
+          schema: { type: string }
+        - name: toDeliveryDate
+          in: query
+          schema: { type: string }
+        - name: fromLastUpdated
+          in: query
+          schema: { type: string }
+        - name: toLastUpdated
+          in: query
+          schema: { type: string }
+        - name: fromTotalAmount
+          in: query
+          schema: { type: string }
+        - name: toTotalAmount
+          in: query
+          schema: { type: string }
+        - name: fromTraderAmount
+          in: query
+          schema: { type: string }
+        - name: toTraderAmount
+          in: query
+          schema: { type: string }
+        - name: fromDeliveryAmount
+          in: query
+          schema: { type: string }
+        - name: toDeliveryAmount
+          in: query
+          schema: { type: string }
+        - name: fromAgentAmount
+          in: query
+          schema: { type: string }
+        - name: toAgentAmount
+          in: query
+          schema: { type: string }
+        - name: fromNetCompanyAmount
+          in: query
+          schema: { type: string }
+        - name: toNetCompanyAmount
+          in: query
+          schema: { type: string }
       responses:
         '200':
           description: Successful Response
+
   /api/v1/orders/report/status:
     get:
       summary: Order Report Per Status
-      tags:
-      - Orders
+      tags: [Orders]
       parameters:
-      - name: deliveryStatus
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: deliveryAgent
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: invoiceNo
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: customerPhoneNo
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: address
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: traderName
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: traderPhoneNumber
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: email
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromOrderDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toOrderDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromDeliveryDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toDeliveryDate
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromLastUpdated
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toLastUpdated
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromTotalAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toTotalAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromTraderAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toTraderAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromDeliveryAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toDeliveryAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromAgentAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toAgentAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: fromNetCompanyAmount
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: toNetCompanyAmount
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: deliveryStatus
+          in: query
+          schema: { type: string }
+        - name: deliveryAgent
+          in: query
+          schema: { type: string }
+        - name: invoiceNo
+          in: query
+          schema: { type: string }
+        - name: customerPhoneNo
+          in: query
+          schema: { type: string }
+        - name: address
+          in: query
+          schema: { type: string }
+        - name: traderName
+          in: query
+          schema: { type: string }
+        - name: traderPhoneNumber
+          in: query
+          schema: { type: string }
+        - name: email
+          in: query
+          schema: { type: string }
+        - name: fromOrderDate
+          in: query
+          schema: { type: string }
+        - name: toOrderDate
+          in: query
+          schema: { type: string }
+        - name: fromDeliveryDate
+          in: query
+          schema: { type: string }
+        - name: toDeliveryDate
+          in: query
+          schema: { type: string }
+        - name: fromLastUpdated
+          in: query
+          schema: { type: string }
+        - name: toLastUpdated
+          in: query
+          schema: { type: string }
+        - name: fromTotalAmount
+          in: query
+          schema: { type: string }
+        - name: toTotalAmount
+          in: query
+          schema: { type: string }
+        - name: fromTraderAmount
+          in: query
+          schema: { type: string }
+        - name: toTraderAmount
+          in: query
+          schema: { type: string }
+        - name: fromDeliveryAmount
+          in: query
+          schema: { type: string }
+        - name: toDeliveryAmount
+          in: query
+          schema: { type: string }
+        - name: fromAgentAmount
+          in: query
+          schema: { type: string }
+        - name: toAgentAmount
+          in: query
+          schema: { type: string }
+        - name: fromNetCompanyAmount
+          in: query
+          schema: { type: string }
+        - name: toNetCompanyAmount
+          in: query
+          schema: { type: string }
       responses:
         '200':
           description: Successful Response
+
   /api/v1/traders:
     post:
       summary: Create Trader
-      tags:
-      - Traders
-      parameters: []
-      responses:
-        '200':
-          description: Successful Response
+      tags: [Traders]
       requestBody:
         required: true
         content:
@@ -480,51 +332,44 @@ paths:
             example:
               name: Trader
               phoneNumber: '1234567890'
-    get:
-      summary: Get All Traders (with filters)
-      tags:
-      - Traders
-      parameters:
-      - name: name
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: phoneNumber
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: email
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: deleted
-        in: query
-        required: false
-        schema:
-          type: string
       responses:
         '200':
           description: Successful Response
-  /api/v1/traders/1:
+    get:
+      summary: Get All Traders (with filters)
+      tags: [Traders]
+      parameters:
+        - name: name
+          in: query
+          schema: { type: string }
+        - name: phoneNumber
+          in: query
+          schema: { type: string }
+        - name: email
+          in: query
+          schema: { type: string }
+        - name: deleted
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Successful Response
+
+  /api/v1/traders/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
     get:
       summary: Get Trader By ID
-      tags:
-      - Traders
-      parameters: []
+      tags: [Traders]
       responses:
         '200':
           description: Successful Response
     put:
       summary: Update Trader
-      tags:
-      - Traders
-      parameters: []
-      responses:
-        '200':
-          description: Successful Response
+      tags: [Traders]
       requestBody:
         required: true
         content:
@@ -533,11 +378,12 @@ paths:
               type: object
             example:
               name: Updated Trader
+      responses:
+        '200':
+          description: Successful Response
     delete:
       summary: Delete Trader
-      tags:
-      - Traders
-      parameters: []
+      tags: [Traders]
       responses:
         '200':
           description: Successful Response
