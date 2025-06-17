@@ -1,6 +1,7 @@
 package com.karrardelivery.controller.spec;
 
 import com.karrardelivery.entity.Order;
+import com.karrardelivery.entity.enums.EDeliveryStatus;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.GreaterThanOrEqual;
 import net.kaczmarzyk.spring.data.jpa.domain.LessThanOrEqual;
@@ -55,4 +56,12 @@ import org.springframework.data.jpa.domain.Specification;
                 onTypeMismatch = OnTypeMismatch.EXCEPTION)
 })
 public interface OrderSpec extends Specification<Order> {
+
+    static Specification<Order> applyDefaultStatusesIfMissing(Specification<Order> original) {
+        return (root, query, cb) -> cb.or(
+                cb.equal(root.get("deliveryStatus"), EDeliveryStatus.DELIVERED),
+                cb.equal(root.get("deliveryStatus"), EDeliveryStatus.CANCELED),
+                cb.equal(root.get("deliveryStatus"), EDeliveryStatus.UNDER_DELIVERY)
+        );
+    }
 }

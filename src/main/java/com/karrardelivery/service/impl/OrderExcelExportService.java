@@ -14,6 +14,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -33,7 +35,7 @@ public class OrderExcelExportService {
 
     public void exportOrdersToExcel(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) throws IOException {
 
-        Specification<Order> specification = Specification.where(spec);
+        Specification<Order> specification = Specification.where(spec).and(OrderSpec.applyDefaultStatusesIfMissing(spec));
         List<Order> orders = orderRepository.findAll(specification);
         List<OrderReportDto> dtos = orderReportMapper.toDtoList(orders);
 
@@ -98,9 +100,16 @@ public class OrderExcelExportService {
 
         byte[] fileBytes = excelExportService.exportSectionsToExcel("Orders", headers, sections);
 
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=orders-report.xlsx");
+        String fileName = generateFileNameWithDateTime("orders-report", "xlsx");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.getOutputStream().write(fileBytes);
         response.getOutputStream().flush();
+    }
+
+    private String generateFileNameWithDateTime(String baseName, String extension) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+        return baseName + "-" + now.format(formatter) + "." + extension;
     }
 }
