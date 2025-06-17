@@ -7,4 +7,5 @@
 
     <include file="db/changelog/sql/1.0.0-create-trader-table.sql"/>
     <include file="db/changelog/sql/1.0.1-create-order-table.sql"/>
+    <include file="db/changelog/sql/1.0.2-alter-table-trader.sql"/>
 </databaseChangeLog>

@@ -20,6 +20,9 @@ public class Trader extends CommonBean{
     @Column(name = "description")
     private String description;
 
+    @Column(name = "code")
+    private String code;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 }

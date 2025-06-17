@@ -20,4 +20,6 @@ public class TraderDto {
     private String email;
 
     private String description;
+
+    private String code;
 }
