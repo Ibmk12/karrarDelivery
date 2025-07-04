@@ -1,12 +1,12 @@
 package com.karrardelivery.service.impl;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
 
@@ -18,91 +18,53 @@ public class ExcelExportService {
         public final List<T> data;
         public final Function<T, Object[]> rowMapper;
         public final Function<List<T>, Object[]> totalMapper;
+        public final Function<List<T>, Object[]> receivedByTrader;
 
-        public Section(String title, List<T> data, Function<T, Object[]> rowMapper, Function<List<T>, Object[]> totalMapper) {
+        public Section(String title, List<T> data, Function<T, Object[]> rowMapper,
+                       Function<List<T>, Object[]> totalMapper,
+                       Function<List<T>, Object[]> receivedByTrader) {
             this.title = title;
             this.data = data;
             this.rowMapper = rowMapper;
             this.totalMapper = totalMapper;
+            this.receivedByTrader = receivedByTrader;
         }
     }
 
-    public <T> byte[] exportSectionsToExcel(String sheetName, String[] headers, List<Section<T>> sections) {
-        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet(sheetName);
+    public <T> XSSFWorkbook createWorkbookWithSections(String sheetName, String[] headers, List<Section<T>> sections) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet(sheetName);
 
-            XSSFFont boldFont = workbook.createFont();
-            boldFont.setBold(true);
-            boldFont.setFontHeightInPoints((short) 11);
+        CellStyle boldStyle = createCellStyle(workbook, true);
+        CellStyle normalStyle = createCellStyle(workbook, false);
 
-            CellStyle boldStyle = workbook.createCellStyle();
-            boldStyle.setFont(boldFont);
-            setBorders(boldStyle);
+        int rowIdx = 0;
 
-            CellStyle normalStyle = workbook.createCellStyle();
-            setBorders(normalStyle);
+        rowIdx = writeSectionMetadata(sheet, sections.get(0), rowIdx, boldStyle);
 
-            int rowIdx = 0;
+        for (Section<T> section : sections) {
+            rowIdx = writeHeader(sheet, headers, rowIdx, boldStyle);
+            rowIdx = writeDataRows(sheet, section.data, section.rowMapper, rowIdx, normalStyle);
+            rowIdx = writeTotals(sheet, section.totalMapper, section.data, rowIdx, boldStyle);
+            rowIdx = writeTotals(sheet, section.receivedByTrader, section.data, rowIdx, boldStyle);
 
-            for (Section<T> section : sections) {
-                // Section title
-                Row titleRow = sheet.createRow(rowIdx++);
-                Cell titleCell = titleRow.createCell(0);
-                titleCell.setCellValue(section.title);
-                titleCell.setCellStyle(boldStyle);
-
-                // Header
-                Row headerRow = sheet.createRow(rowIdx++);
-                for (int i = 0; i < headers.length; i++) {
-                    Cell cell = headerRow.createCell(i);
-                    cell.setCellValue(headers[i]);
-                    cell.setCellStyle(boldStyle);
-                }
-
-                // Data rows
-                for (T item : section.data) {
-                    Object[] values = section.rowMapper.apply(item);
-                    Row row = sheet.createRow(rowIdx++);
-                    for (int i = 0; i < values.length; i++) {
-                        Cell cell = row.createCell(i);
-                        if (values[i] instanceof Number number) {
-                            cell.setCellValue(number.doubleValue());
-                        } else {
-                            cell.setCellValue(String.valueOf(values[i]));
-                        }
-                        cell.setCellStyle(normalStyle);
-                    }
-                }
-
-                // Total row
-                if (section.totalMapper != null) {
-                    Object[] totals = section.totalMapper.apply(section.data);
-                    Row totalRow = sheet.createRow(rowIdx++);
-                    for (int i = 0; i < totals.length; i++) {
-                        Cell cell = totalRow.createCell(i);
-                        if (totals[i] instanceof Number number) {
-                            cell.setCellValue(number.doubleValue());
-                        } else {
-                            cell.setCellValue(String.valueOf(totals[i]));
-                        }
-                        cell.setCellStyle(boldStyle);
-                    }
-                }
-
-                rowIdx++; // Empty row between sections
-            }
-
-            for (int i = 0; i < headers.length; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            workbook.write(out);
-            return out.toByteArray();
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to generate Excel file", e);
+            rowIdx++; // spacing between sections
         }
+
+        autoSizeColumns(sheet, headers.length);
+
+        return workbook;
+    }
+
+    private CellStyle createCellStyle(Workbook workbook, boolean bold) {
+        XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+        font.setBold(bold);
+        font.setFontHeightInPoints((short) 11);
+
+        CellStyle style = workbook.createCellStyle();
+        style.setFont(font);
+        setBorders(style);
+        return style;
     }
 
     private void setBorders(CellStyle style) {
@@ -110,5 +72,86 @@ public class ExcelExportService {
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
+    }
+
+    private void autoSizeColumns(Sheet sheet, int columnCount) {
+        for (int i = 0; i < columnCount; i++) {
+            sheet.autoSizeColumn(i);
+        }
+    }
+
+    private int writeSectionMetadata(Sheet sheet, Section<?> section, int rowIdx, CellStyle style) {
+        Row metaRow = sheet.createRow(rowIdx++);
+        int dateStartCol = 2;
+        int dateEndCol = 6;
+        int statusStartCol = dateEndCol + 1;
+        int statusEndCol = statusStartCol + 3;
+
+        // Date cell
+        Cell dateCell = metaRow.createCell(dateStartCol - 2);
+        dateCell.setCellValue(LocalDate.now().toString());
+        sheet.addMergedRegion(new CellRangeAddress(metaRow.getRowNum(), metaRow.getRowNum(), dateStartCol, dateEndCol));
+        applyMergedStyle(metaRow, dateStartCol - 2, dateEndCol - 2, style);
+
+        // Status cell
+        Cell statusCell = metaRow.createCell(statusStartCol - 2);
+        statusCell.setCellValue(section.title);
+        sheet.addMergedRegion(new CellRangeAddress(metaRow.getRowNum(), metaRow.getRowNum(), statusStartCol, statusEndCol));
+        applyMergedStyle(metaRow, statusStartCol - 2, statusEndCol - 2, style);
+
+        return rowIdx;
+    }
+
+    private void applyMergedStyle(Row row, int startCol, int endCol, CellStyle style) {
+        for (int col = startCol; col <= endCol; col++) {
+            Cell cell = row.getCell(col);
+            if (cell == null) cell = row.createCell(col);
+            cell.setCellStyle(style);
+        }
+    }
+
+    private int writeHeader(Sheet sheet, String[] headers, int rowIdx, CellStyle style) {
+        Row row = sheet.createRow(rowIdx++);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(style);
+        }
+        return rowIdx;
+    }
+
+    private <T> int writeDataRows(Sheet sheet, List<T> data, Function<T, Object[]> mapper, int rowIdx, CellStyle style) {
+        for (T item : data) {
+            Object[] values = mapper.apply(item);
+            Row row = sheet.createRow(rowIdx++);
+            for (int i = 0; i < values.length; i++) {
+                Cell cell = row.createCell(i);
+                if (values[i] instanceof Number number) {
+                    cell.setCellValue(number.doubleValue());
+                } else {
+                    cell.setCellValue(String.valueOf(values[i]));
+                }
+                cell.setCellStyle(style);
+            }
+        }
+        return rowIdx;
+    }
+
+    private <T> int writeTotals(Sheet sheet, Function<List<T>, Object[]> mapper, List<T> data, int rowIdx, CellStyle style) {
+        if (mapper == null) return rowIdx;
+
+        Object[] values = mapper.apply(data);
+        Row row = sheet.createRow(rowIdx++);
+        for (int i = 0; i < values.length; i++) {
+            Cell cell = row.createCell(i);
+            if (values[i] instanceof Number number) {
+                cell.setCellValue(number.doubleValue());
+            } else {
+                cell.setCellValue(String.valueOf(values[i]));
+            }
+            cell.setCellStyle(style);
+        }
+
+        return rowIdx;
     }
 }
