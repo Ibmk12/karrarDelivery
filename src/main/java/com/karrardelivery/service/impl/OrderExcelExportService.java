@@ -90,9 +90,9 @@ public class OrderExcelExportService {
                         Function<List<OrderReportDto>, Object[]> receivedByTraderMapper = list -> new Object[]{
                                 messageService.getMessage("report.received.by.trader"),
                                 "", "", "",
-                                "",
-                                "",
                                 list.stream().mapToDouble(OrderReportDto::getTraderAmount).sum(),
+                                "",
+                                "",
                                 "", ""
                         };
                         return new Section<>(

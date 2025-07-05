@@ -46,7 +46,7 @@ public class ExcelExportService {
             rowIdx = writeHeader(sheet, headers, rowIdx, boldStyle);
             rowIdx = writeDataRows(sheet, section.data, section.rowMapper, rowIdx, normalStyle);
             rowIdx = writeTotals(sheet, section.totalMapper, section.data, rowIdx, boldStyle);
-            rowIdx = writeTotals(sheet, section.receivedByTrader, section.data, rowIdx, boldStyle);
+            rowIdx = writeReceivedByTrader(sheet, section.receivedByTrader, section.data, rowIdx, boldStyle);
 
             rowIdx++; // spacing between sections
         }
@@ -151,7 +151,14 @@ public class ExcelExportService {
             }
             cell.setCellStyle(style);
         }
-
+        sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 2, 5));
         return rowIdx;
+    }
+
+    private <T> int writeReceivedByTrader(Sheet sheet, Function<List<T>, Object[]> mapper, List<T> data, int rowIdx, CellStyle style) {
+        writeTotals(sheet, mapper, data, rowIdx, style);
+        Row row = sheet.getRow(rowIdx);
+        sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 6, 8));
+        return rowIdx + 1;
     }
 }
