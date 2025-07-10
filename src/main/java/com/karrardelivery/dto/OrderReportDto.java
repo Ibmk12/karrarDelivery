@@ -25,4 +25,6 @@ public class OrderReportDto {
     private double traderAmount;
     private String customerPhoneNo;
     private String deliveryStatus;
+    private String traderCode;
+    private String reportDate;
 }

@@ -1,5 +1,7 @@
 package com.karrardelivery.service.impl;
 
+import com.karrardelivery.dto.OrderReportDto;
+import lombok.Data;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Service
+@Data
 public class ExcelExportService {
 
     public static class Section<T> {
@@ -95,7 +98,7 @@ public class ExcelExportService {
 
         // Status cell
         Cell statusCell = metaRow.createCell(statusStartCol - 2);
-        statusCell.setCellValue(section.title);
+        statusCell.setCellValue(getTraderNameFromSection(section));
         sheet.addMergedRegion(new CellRangeAddress(metaRow.getRowNum(), metaRow.getRowNum(), statusStartCol, statusEndCol));
         applyMergedStyle(metaRow, statusStartCol - 2, statusEndCol - 2, style);
 
@@ -160,5 +163,15 @@ public class ExcelExportService {
         Row row = sheet.getRow(rowIdx);
         sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 6, 8));
         return rowIdx + 1;
+    }
+
+    private String getTraderNameFromSection(Section<?> section) {
+        if (section.data != null && !section.data.isEmpty()) {
+            Object first = section.data.get(0);
+            if (first instanceof OrderReportDto dto && dto.getTraderName() != null) {
+                return dto.getTraderName();
+            }
+        }
+        return "";
     }
 }

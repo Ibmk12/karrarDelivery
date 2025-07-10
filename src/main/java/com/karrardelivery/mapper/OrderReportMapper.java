@@ -13,7 +13,8 @@ public interface OrderReportMapper extends IBaseMapper<Order, OrderReportDto> {
     @Mappings({
             @Mapping(target = "emirate", source = "emirate", qualifiedByName = "emirateToString"),
             @Mapping(target = "deliveryStatus", source = "deliveryStatus", qualifiedByName = "deliveryStatusToString"),
-            @Mapping(target = "traderName", source = "trader.name")
+            @Mapping(target = "traderName", source = "trader.name"),
+            @Mapping(target = "traderCode", source = "trader.code")
     })
     @Override
     OrderReportDto toDto(Order order);

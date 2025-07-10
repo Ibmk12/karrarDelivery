@@ -1,5 +1,6 @@
 package com.karrardelivery.common.utility;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -13,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,4 +81,23 @@ public class BeanUtilsHelper {
             return enumValue.name();
         }
     }
+
+    public static LocalDateTime[] getDeliveryDateRange(HttpServletRequest request) {
+        String deliveryDateParam = request.getParameter("fromDeliveryDate");
+        LocalDate baseDate;
+
+        try {
+            baseDate = (deliveryDateParam != null && !deliveryDateParam.isBlank())
+                    ? LocalDate.parse(deliveryDateParam.trim())
+                    : LocalDate.now().minusDays(1);
+        } catch (Exception e) {
+            baseDate = LocalDate.now().minusDays(1);
+        }
+
+        LocalDateTime startOfDay = baseDate.atStartOfDay();
+        LocalDateTime endOfDay = baseDate.plusDays(1).atStartOfDay().minusNanos(1);
+
+        return new LocalDateTime[]{startOfDay, endOfDay};
+    }
+
 }
