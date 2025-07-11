@@ -92,7 +92,7 @@ public class ExcelExportService {
 
         // Date cell
         Cell dateCell = metaRow.createCell(dateStartCol - 2);
-        dateCell.setCellValue(LocalDate.now().toString());
+        dateCell.setCellValue(((OrderReportDto)section.data.get(0)).getDeliveryDate());
         sheet.addMergedRegion(new CellRangeAddress(metaRow.getRowNum(), metaRow.getRowNum(), dateStartCol, dateEndCol));
         applyMergedStyle(metaRow, dateStartCol - 2, dateEndCol - 2, style);
 

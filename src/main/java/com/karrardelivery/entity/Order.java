@@ -39,6 +39,7 @@ public class Order {
 
 
     private String deliveryAgent;
+    @Column(name = "delivery_date")
     private Date deliveryDate;
     private String address;
     private String longitude;
