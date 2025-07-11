@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -37,6 +39,10 @@ public class OrderReportDataService {
         List<Order> orders = orderRepository.findCustomOrders(traderName.trim(), startOfDay, endOfDay);
 
         // Map entities to DTOs
-        return orderReportMapper.toDtoList(orders);
+        List<OrderReportDto> dtos = orderReportMapper.toDtoList(orders);
+        if(dtos != null && !dtos.isEmpty())
+            dtos.get(0).setOrderDate(Date.from(startOfDay.atZone(ZoneId.systemDefault()).toInstant()));
+
+        return dtos;
     }
 }
