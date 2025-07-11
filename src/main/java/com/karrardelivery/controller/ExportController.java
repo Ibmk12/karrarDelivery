@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.karrardelivery.constant.ApiUrls.REPORT;
-import static com.karrardelivery.constant.ApiUrls.REPORT_STATUS;
+import static com.karrardelivery.constant.ApiUrls.*;
 
 @RestController
 @RequestMapping(ApiUrls.EXPORT_ORDERS)
@@ -26,10 +25,10 @@ public class ExportController {
 
     private final OrderExcelExportService orderExcelExportService;
 
-    @GetMapping
-    public void getOrderReportPerStatusReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
+    @GetMapping(DAILY_REPORT)
+    public void getOrdersDailyReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
         try {
-            orderExcelExportService.exportOrdersToExcel(spec, response, request);
+            orderExcelExportService.getOrdersDailyReport(spec, response, request);
         } catch (Exception e) {
             log.error("Error exporting order report", e);
         }

@@ -34,7 +34,7 @@ public class OrderExcelExportService {
     private final ExcelFormattingService excelFormattingService;
     private final MessageService messageService;
 
-    public void exportOrdersToExcel(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
+    public void getOrdersDailyReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
         try {
             List<OrderReportDto> dtos = orderReportDataService.fetchReportData(spec);
 
