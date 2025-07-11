@@ -196,7 +196,7 @@ public class ExcelExportService {
         if (section.data != null && !section.data.isEmpty()) {
             Object first = section.data.get(0);
             if (first instanceof OrderReportDto dto && dto.getTraderName() != null) {
-                return dto.getTraderName();
+                return dto.getTraderName() + " - " + dto.getTraderCode();
             }
         }
         return "";
