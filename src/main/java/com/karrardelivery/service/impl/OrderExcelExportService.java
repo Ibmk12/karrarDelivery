@@ -106,8 +106,8 @@ public class OrderExcelExportService {
                     .toList();
 
             // Excel processing
-            XSSFWorkbook workbook = excelExportService.createWorkbookWithSections("Orders", headers, sections);
-            Sheet sheet = workbook.getSheet("Orders");
+            XSSFWorkbook workbook = excelExportService.createWorkbookWithSections(dtos.get(0).getTraderName(), headers, sections);
+            Sheet sheet = workbook.getSheet(dtos.get(0).getTraderName());
 
             excelFormattingService.centerSheetLayout(sheet);
             excelFormattingService.insertLogo(workbook, sheet, LOGO_PATH);

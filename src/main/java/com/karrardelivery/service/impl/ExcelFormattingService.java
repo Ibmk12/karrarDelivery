@@ -55,21 +55,85 @@ public class ExcelFormattingService {
     }
 
     public void insertLogo(Workbook workbook, Sheet sheet, String logoPath) {
-        try (InputStream is = getClass().getResourceAsStream(logoPath)) {
-            if (is == null) return;
+        try {
+            // Try multiple ways to load the resource
+            InputStream is = null;
+
+            // Method 1: Class resource (for resources in classpath)
+            is = getClass().getResourceAsStream(logoPath);
+
+            // Method 2: ClassLoader resource (alternative approach)
+            if (is == null) {
+                is = getClass().getClassLoader().getResourceAsStream(logoPath);
+            }
+
+            // Method 3: Try without leading slash if path starts with /
+            if (is == null && logoPath.startsWith("/")) {
+                is = getClass().getResourceAsStream(logoPath.substring(1));
+            }
+
+            // Method 4: Try with leading slash if path doesn't start with /
+            if (is == null && !logoPath.startsWith("/")) {
+                is = getClass().getResourceAsStream("/" + logoPath);
+            }
+
+            if (is == null) {
+                log.error("Logo file not found at path: {}", logoPath);
+                return;
+            }
+
             byte[] bytes = IOUtils.toByteArray(is);
-            int picIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+            is.close();
+
+            if (bytes.length == 0) {
+                log.error("Logo file is empty at path: {}", logoPath);
+                return;
+            }
+
+            // Determine picture type based on file extension
+            int pictureType = Workbook.PICTURE_TYPE_PNG; // default
+            String lowerPath = logoPath.toLowerCase();
+            if (lowerPath.endsWith(".jpg") || lowerPath.endsWith(".jpeg")) {
+                pictureType = Workbook.PICTURE_TYPE_JPEG;
+            } else if (lowerPath.endsWith(".png")) {
+                pictureType = Workbook.PICTURE_TYPE_PNG;
+            }
+
+            int picIdx = workbook.addPicture(bytes, pictureType);
             Drawing<?> drawing = sheet.createDrawingPatriarch();
             CreationHelper helper = workbook.getCreationHelper();
             ClientAnchor anchor = helper.createClientAnchor();
-            anchor.setCol1(0);
-            anchor.setRow1(0);
+
+            // Set anchor position (columns C and D)
+            anchor.setCol1(2);  // Start column C (0-indexed, so 2 = column C)
+            anchor.setRow1(0);  // Start row
+            anchor.setCol2(6);  // End column (column D + 1, so 4 = after column D)
+            anchor.setRow2(4);  // End row (spans 3 rows)
+
+            // Set anchor type to move and resize with cells
+            anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
+
             Picture picture = drawing.createPicture(anchor, picIdx);
-            picture.resize(3, 3);
+
+            // Try different resize approaches
+            try {
+                // Method 1: Use resize with scale factor
+                picture.resize(0.5); // 50% of original size
+            } catch (Exception e) {
+                try {
+                    // Method 2: Use resize with width/height factors
+                    picture.resize(0.5, 0.5);
+                } catch (Exception e2) {
+                    log.warn("Could not resize logo, using default size");
+                }
+            }
+
+            log.info("Logo inserted successfully from path: {}", logoPath);
+
         } catch (IOException e) {
-            log.error("Failed to insert logo from path: {}", logoPath, e);
+            log.error("IO error while inserting logo from path: {}", logoPath, e);
         } catch (Exception e) {
-            log.error("Unexpected error while inserting logo: {}", logoPath, e);
+            log.error("Unexpected error while inserting logo from path: {}", logoPath, e);
         }
     }
 }
