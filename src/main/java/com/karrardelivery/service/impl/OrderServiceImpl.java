@@ -92,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public GenericResponse<String> updateOrder(Long id, OrderDto orderDto) {
+    public GenericResponse<String> updateOrderMetadata(Long id, OrderDto orderDto) {
         Order order = getOrderByIdOrThrow(id);
         orderMapper.mapToUpdate(order, orderDto);
         calculateOrderAmounts(order);
@@ -118,7 +118,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public GenericResponse<String> updateOrdersStatus(UpdatedOrderStatusRequest request) {
+    public GenericResponse<String> updateOrderListStatus(UpdatedOrderStatusRequest request) {
         List<Order> orderList = orderRepository.findByInvoiceNoIn(request.getOrderList());
         if(orderList == null || orderList.isEmpty())
             throw new ResourceNotFoundException(
@@ -142,12 +142,14 @@ public class OrderServiceImpl implements OrderService {
             case EXCHANGED:
                 for (Order order : orderList) {
                     order.setDeliveryStatus(EDeliveryStatus.EXCHANGED);
+                    order.setDeliveryDate(new Date());
                 }
                 break;
 
             case PENDING:
                 for (Order order : orderList) {
                     order.setDeliveryStatus(EDeliveryStatus.PENDING);
+                    order.setDeliveryDate(new Date());
                 }
                 break;
 
@@ -160,14 +162,64 @@ public class OrderServiceImpl implements OrderService {
             case CANCELED:
                 for (Order order : orderList) {
                     order.setDeliveryStatus(EDeliveryStatus.CANCELED);
+                    order.setDeliveryDate(new Date());
                 }
                 break;
 
             case  FAILED:
                 for (Order order : orderList) {
                     order.setDeliveryStatus(EDeliveryStatus.FAILED);
+                    order.setDeliveryDate(new Date());
                 }
         }
+        return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
+    }
+
+    @Override
+    public GenericResponse<String> updateOrderStatus(OrderDto request) {
+        Order order = orderRepository.findByInvoiceNo(request.getInvoiceNo());
+        if(order == null)
+            throw new ResourceNotFoundException(
+                    String.format(messageService.getMessage("order.not.found.err.msg"), String.join(",", request.getInvoiceNo())),
+                    ORDER_NOT_FOUND_ERR_CODE);
+
+        EDeliveryStatus status = BeanUtilsHelper.fromString(EDeliveryStatus.class, request.getDeliveryStatus());
+        if(status == null)
+            throw new ResourceNotFoundException(
+                    String.format(messageService.getMessage("delivery.status.not.found.err.msg"), request.getDeliveryStatus()),
+                    INVALID_DELIVERY_STATUS_ERR_CODE);
+
+        switch (status) {
+            case DELIVERED:
+                order.setDeliveryStatus(EDeliveryStatus.DELIVERED);
+                order.setDeliveryDate(new Date());
+                break;
+
+            case EXCHANGED:
+                order.setDeliveryStatus(EDeliveryStatus.EXCHANGED);
+                order.setDeliveryDate(new Date());
+                break;
+
+            case PENDING:
+                order.setDeliveryStatus(EDeliveryStatus.PENDING);
+                order.setDeliveryDate(new Date());
+                break;
+
+            case UNDER_DELIVERY:
+                order.setDeliveryStatus(EDeliveryStatus.UNDER_DELIVERY);
+                break;
+
+            case CANCELED:
+                order.setDeliveryStatus(EDeliveryStatus.CANCELED);
+                order.setDeliveryDate(new Date());
+                break;
+
+            case FAILED:
+                order.setDeliveryStatus(EDeliveryStatus.FAILED);
+                order.setDeliveryDate(new Date());
+        }
+        updateAndRecalculateAmounts(order, request);
+        orderRepository.save(order);
         return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
     }
 
@@ -244,4 +296,31 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    private void updateAndRecalculateAmounts(Order order, OrderDto request) {
+        // Use request values if present, otherwise fallback to order's existing values
+        double traderAmount = request.getTraderAmount() != null
+                ? request.getTraderAmount()
+                : defaultIfNull(order.getTraderAmount());
+
+        double deliveryAmount = request.getDeliveryAmount() != null
+                ? request.getDeliveryAmount()
+                : defaultIfNull(order.getDeliveryAmount());
+
+        double agentAmount = request.getAgentAmount() != null
+                ? request.getAgentAmount()
+                : defaultIfNull(order.getAgentAmount());
+
+        // Only update the fields that are explicitly passed in
+        if (request.getTraderAmount() != null) order.setTraderAmount(traderAmount);
+        if (request.getDeliveryAmount() != null) order.setDeliveryAmount(deliveryAmount);
+        if (request.getAgentAmount() != null) order.setAgentAmount(agentAmount);
+
+        // Recalculate dependent amounts
+        order.setTotalAmount(traderAmount + deliveryAmount);
+        order.setNetCompanyAmount(deliveryAmount - agentAmount);
+    }
+
+    private double defaultIfNull(Double value) {
+        return value != null ? value : 0.0;
+    }
 }

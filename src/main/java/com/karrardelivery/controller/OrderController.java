@@ -18,8 +18,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import static com.karrardelivery.constant.ApiUrls.REPORT;
-import static com.karrardelivery.constant.ApiUrls.REPORT_STATUS;
+import static com.karrardelivery.constant.ApiUrls.*;
 
 @RestController
 @RequestMapping(ApiUrls.ORDERS)
@@ -48,8 +47,8 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GenericResponse<String>> updateOrder(@PathVariable Long id, @RequestBody OrderDto orderDto) {
-        orderService.updateOrder(id, orderDto);
+    public ResponseEntity<GenericResponse<String>> updateOrderMetadata(@PathVariable Long id, @RequestBody OrderDto orderDto) {
+        orderService.updateOrderMetadata(id, orderDto);
         return ResponseEntity.noContent().build();
     }
 
@@ -60,8 +59,14 @@ public class OrderController {
     }
 
     @PatchMapping
-    public ResponseEntity<GenericResponse<String>> updateOrdersStatus(@RequestBody UpdatedOrderStatusRequest request) {
-        orderService.updateOrdersStatus(request);
+    public ResponseEntity<GenericResponse<String>> updateOrderListStatus(@RequestBody UpdatedOrderStatusRequest request) {
+        orderService.updateOrderListStatus(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<GenericResponse<String>> updateOrderStatus(@RequestBody OrderDto request) {
+        orderService.updateOrderStatus(request);
         return ResponseEntity.noContent().build();
     }
 

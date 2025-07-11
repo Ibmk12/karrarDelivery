@@ -11,4 +11,5 @@ public class ApiUrls {
     public final static String EXPORT_ORDERS = EXPORT + "/orders";
     public final static String DAILY_REPORT = "/daily-report";
     public final static String LOGO_PATH = "/static/logo.png";
+    public final static String ORDER_META_DATA = "/metadata";
 }

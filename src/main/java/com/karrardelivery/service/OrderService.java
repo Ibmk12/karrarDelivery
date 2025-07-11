@@ -12,12 +12,13 @@ import java.util.List;
 
 public interface OrderService {
 
-    GenericResponse<String> updateOrder(Long id, OrderDto orderDto);
+    GenericResponse<String> updateOrderMetadata(Long id, OrderDto orderDto);
     void deleteOrder(Long id);
     GenericResponse<String> createOrder(OrderDto orderDto);
     GenericResponse<List<OrderDto>> getAllOrders(OrderSpec spec);
     GenericResponse<OrderReportDtoList> getOrderReport(OrderSpec spec);
     GenericResponse<OrderReport> getOrderReportPerStatus(OrderSpec spec);
     GenericResponse<OrderDto> getOrderById(Long id);
-    GenericResponse<String> updateOrdersStatus(UpdatedOrderStatusRequest request);
+    GenericResponse<String> updateOrderListStatus(UpdatedOrderStatusRequest request);
+    GenericResponse<String> updateOrderStatus(OrderDto request);
 }
