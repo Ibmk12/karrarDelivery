@@ -159,7 +159,7 @@ public class ExcelExportService {
                 if (values[i] instanceof Number number) {
                     cell.setCellValue(number.doubleValue());
                 } else {
-                    cell.setCellValue(String.valueOf(values[i]));
+                    cell.setCellValue(values[i] == null? "" : String.valueOf(values[i]));
                 }
                 cell.setCellStyle(style);
             }
