@@ -4,6 +4,7 @@ import com.karrardelivery.dto.OrderReportDto;
 import lombok.Data;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import java.util.function.Function;
 @Service
 @Data
 public class ExcelExportService {
+
+    public static final String SIGNATURE = "Account signature: _________________________Client Signature__________________________________";
 
     public static class Section<T> {
         public final String title;
@@ -54,7 +57,8 @@ public class ExcelExportService {
             rowIdx++; // spacing between sections
         }
 
-        autoSizeColumns(sheet, headers.length);
+        writeSheetFooter(sheet, null, rowIdx, boldStyle);
+        autoSizeAndAlignColumns(sheet, headers.length);
 
         return workbook;
     }
@@ -77,8 +81,31 @@ public class ExcelExportService {
         style.setBorderRight(BorderStyle.THIN);
     }
 
-    private void autoSizeColumns(Sheet sheet, int columnCount) {
-        for (int i = 0; i < columnCount; i++) {
+    private void autoSizeAndAlignColumns(Sheet sheet, int columnCount) {
+        // Create a default cell style with center alignment
+        CellStyle centerStyle = sheet.getWorkbook().createCellStyle();
+        centerStyle.setAlignment(HorizontalAlignment.CENTER);
+        centerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        // Apply center alignment to all existing cells in the sheet
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                if (cell != null) {
+                    // Create a new style that preserves existing formatting
+                    CellStyle newStyle = sheet.getWorkbook().createCellStyle();
+                    if (cell.getCellStyle() != null) {
+                        newStyle.cloneStyleFrom(cell.getCellStyle());
+                    }
+                    // Set center alignment
+                    newStyle.setAlignment(HorizontalAlignment.CENTER);
+                    newStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+                    cell.setCellStyle(newStyle);
+                }
+            }
+        }
+
+        // Auto-size columns
+        for (int i = 1; i < columnCount; i++) {
             sheet.autoSizeColumn(i);
         }
     }
@@ -173,5 +200,48 @@ public class ExcelExportService {
             }
         }
         return "";
+    }
+
+    private int writeSheetFooter(Sheet sheet, Section<?> section, int rowIdx, CellStyle style) {
+        rowIdx--;
+        Row metaRow = sheet.createRow(rowIdx++);
+        int dateStartCol = 2;
+        int dateEndCol = 10;
+
+        int startRow = metaRow.getRowNum();
+        int endRow = startRow + 1; // merge with next row
+
+        Cell dateCell = metaRow.createCell(dateStartCol - 2);
+        dateCell.setCellValue(SIGNATURE);
+
+        // Create the merged region
+        CellRangeAddress mergedRegion = new CellRangeAddress(startRow, endRow, dateStartCol, dateEndCol);
+        sheet.addMergedRegion(mergedRegion);
+
+        // Create a new style with center alignment
+        CellStyle centeredStyle = sheet.getWorkbook().createCellStyle();
+        centeredStyle.cloneStyleFrom(style); // Copy existing style properties
+
+        // Set center alignment (both horizontal and vertical)
+        centeredStyle.setAlignment(HorizontalAlignment.CENTER);
+        centeredStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        applyMergedStyle(metaRow, dateStartCol - 2, dateEndCol - 2, centeredStyle);
+        Row nextRow = sheet.createRow(rowIdx++); // create the second row that's part of the merge
+
+        // Apply borders around the merged region using RegionUtil
+        CellRangeAddress styleMergedRegion = new CellRangeAddress(startRow, endRow, dateStartCol - 2, dateEndCol - 2);
+        RegionUtil.setBorderTop(BorderStyle.THICK, styleMergedRegion, sheet);
+        RegionUtil.setBorderBottom(BorderStyle.THICK, styleMergedRegion, sheet);
+        RegionUtil.setBorderLeft(BorderStyle.THICK, styleMergedRegion, sheet);
+        RegionUtil.setBorderRight(BorderStyle.THICK, styleMergedRegion, sheet);
+
+        // Set border colors to black
+        RegionUtil.setTopBorderColor(IndexedColors.BLACK.getIndex(), styleMergedRegion, sheet);
+        RegionUtil.setBottomBorderColor(IndexedColors.BLACK.getIndex(), styleMergedRegion, sheet);
+        RegionUtil.setLeftBorderColor(IndexedColors.BLACK.getIndex(), styleMergedRegion, sheet);
+        RegionUtil.setRightBorderColor(IndexedColors.BLACK.getIndex(), styleMergedRegion, sheet);
+
+        return rowIdx;
     }
 }
