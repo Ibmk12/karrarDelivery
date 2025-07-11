@@ -40,14 +40,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public GenericResponse<String> createOrder(OrderDto orderDto) {
-        if(orderRepository.existsByInvoiceNo(orderDto.getInvoiceNo()))
-            throw new DuplicateResourceException(String.format(messageService.getMessage("duplicate.order.err.msg"), orderDto.getInvoiceNo()), DUPLICATE_ORDER_ERR_CODE);
+        validateUniqueInvoice(orderDto.getInvoiceNo());
+        applyDefaultValues(orderDto);
 
         Trader trader = getActiveTraderByIdOrThrow(orderDto.getTraderId());
-        Order order = orderMapper.toEntity(orderDto);
-        order.setTrader(trader);
+        Order order = prepareOrder(orderDto, trader);
+
         calculateOrderAmounts(order);
+        order.setCustomerPhoneNo(BeanUtilsHelper.internationalPhoneFormat(orderDto.getCustomerPhoneNo()));
         orderRepository.save(order);
+
         return GenericResponse.successResponseWithoutData(Messages.ORDER_CREATED_SUCCESSFULLY);
     }
 
@@ -133,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
             case DELIVERED:
                 for (Order order : orderList) {
                     order.setDeliveryStatus(EDeliveryStatus.DELIVERED);
-                    order.setDeliveryDate(LocalDateTime.now());
+                    order.setDeliveryDate(new Date());
                 }
                 break;
 
@@ -215,4 +217,31 @@ public class OrderServiceImpl implements OrderService {
 
         return populateOrderReportTotals(filtered);
     }
+
+    private void validateUniqueInvoice(String invoiceNo) {
+        if (orderRepository.existsByInvoiceNo(invoiceNo)) {
+            String message = String.format(
+                    messageService.getMessage("duplicate.order.err.msg"),
+                    invoiceNo
+            );
+            throw new DuplicateResourceException(message, DUPLICATE_ORDER_ERR_CODE);
+        }
+    }
+
+    private void applyDefaultValues(OrderDto orderDto) {
+        if (orderDto.getOrderDate() == null) {
+            orderDto.setOrderDate(new Date());
+        }
+
+        if (orderDto.getDeliveryStatus() == null || orderDto.getDeliveryStatus().isBlank()) {
+            orderDto.setDeliveryStatus("Under Delivery");
+        }
+    }
+
+    private Order prepareOrder(OrderDto orderDto, Trader trader) {
+        Order order = orderMapper.toEntity(orderDto);
+        order.setTrader(trader);
+        return order;
+    }
+
 }

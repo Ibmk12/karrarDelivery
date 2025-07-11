@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @MappedSuperclass
 @Getter
@@ -28,20 +29,20 @@ public abstract class CommonBean implements Serializable {
     private String status;
 
     @Column(name = "last_updated")
-    private LocalDateTime lastUpdate;
+    private Date lastUpdate;
 
     @Column(name = "creation_time", updatable = false)
-    private LocalDateTime creationTime;
+    private Date creationTime;
 
     @PrePersist
     protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
+        Date now = new Date();
         this.creationTime = now;
         this.lastUpdate = now;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.lastUpdate = LocalDateTime.now();
+        this.lastUpdate = new Date();
     }
 }

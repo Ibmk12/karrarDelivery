@@ -100,4 +100,22 @@ public class BeanUtilsHelper {
         return new LocalDateTime[]{startOfDay, endOfDay};
     }
 
+    public static String internationalPhoneFormat(String phone) {
+        if (phone == null || phone.isBlank()) {
+            return phone;
+        }
+
+        phone = phone.trim().replaceAll("\\s+", ""); // Remove spaces
+
+        if (phone.startsWith("+971")) {
+            return phone; // Already in international format
+        }
+
+        if (phone.startsWith("0")) {
+            phone = phone.substring(1); // Remove leading 0
+        }
+
+        return "+971" + phone;
+    }
+
 }

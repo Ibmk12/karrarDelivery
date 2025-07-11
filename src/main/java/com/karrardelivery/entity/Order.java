@@ -21,7 +21,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime orderDate;
+    private Date orderDate;
     private String invoiceNo;
 
     @Enumerated(EnumType.STRING)
@@ -39,7 +39,7 @@ public class Order {
 
 
     private String deliveryAgent;
-    private LocalDateTime deliveryDate;
+    private Date deliveryDate;
     private String address;
     private String longitude;
     private String latitude;
@@ -54,5 +54,5 @@ public class Order {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_updated", nullable = false)
-    private LocalDateTime lastUpdated;
+    private Date lastUpdated;
 }

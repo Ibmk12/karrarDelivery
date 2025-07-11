@@ -16,7 +16,7 @@ public class OrderReportDto {
 
     private long sequenceNo;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm a")
-    private LocalDateTime orderDate;
+    private Date orderDate;
     private String invoiceNo;
     private String emirate;
     private String traderName;

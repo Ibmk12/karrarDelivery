@@ -16,9 +16,9 @@ public class OrderDto {
     private String invoiceNo;
     private String deliveryAgent;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm a")
-    private LocalDateTime orderDate;
+    private Date orderDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm a")
-    private LocalDateTime deliveryDate;
+    private Date deliveryDate;
     private String address;
     private String longitude;
     private String latitude;
