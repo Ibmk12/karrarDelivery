@@ -19,5 +19,6 @@ public class ApiUrls {
     public final static String AUTH = BASE_URL + "auth";
     public final static String LOGIN = "/login";
     public final static String REFRESH = "/refresh";
+    public final static String LOGOUT = BASE_URL + "logout";
 
 }

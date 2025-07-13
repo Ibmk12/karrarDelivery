@@ -10,4 +10,5 @@
     <include file="db/changelog/sql/1.0.2-alter-table-trader.sql"/>
     <include file="db/changelog/sql/1.0.3-create-user-table.sql"/>
     <include file="db/changelog/sql/1.0.4-add-admin-user.sql"/>
+    <include file="db/changelog/sql/1.0.5-added-blacklist-table.sql"/>
 </databaseChangeLog>

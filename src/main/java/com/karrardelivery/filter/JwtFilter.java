@@ -3,6 +3,7 @@ package com.karrardelivery.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.karrardelivery.dto.ErrorDto;
 import com.karrardelivery.dto.ErrorListDto;
+import com.karrardelivery.repository.BlacklistedTokenRepository;
 import com.karrardelivery.security.JwtUtil;
 import com.karrardelivery.service.MessageService;
 import com.karrardelivery.service.impl.UserDetailsServiceImpl;
@@ -33,6 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImpl userDetailsService;
     private final ObjectMapper objectMapper;
     private final MessageService messageService;
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -44,6 +46,11 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
+                if (blacklistedTokenRepository.findByAccessToken(token).isPresent()) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write(messageService.getMessage("auth.token.invalidated"));
+                    return;
+                }
                 String phone = jwtUtil.extractPhone(token);
                 String tokenType = jwtUtil.extractTokenType(token);
                 if (!"access".equals(tokenType)) {
