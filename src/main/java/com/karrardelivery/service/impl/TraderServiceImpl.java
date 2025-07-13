@@ -13,6 +13,8 @@ import com.karrardelivery.service.MessageService;
 import com.karrardelivery.service.TraderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import static com.karrardelivery.constant.ErrorCodes.*;
@@ -42,9 +44,9 @@ public class TraderServiceImpl implements TraderService {
     }
 
     @Override
-    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec) {
-        List<TraderDto> result = traderMapper.toDtoList(traderRepository.findAll(spec));
-        return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
+    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec, Pageable pageable) {
+        Page<TraderDto> result = traderMapper.mapToDtoPageable(traderRepository.findAll(spec, pageable));
+        return GenericResponse.successResponseWithPagination(result.getContent(), result, DATA_FETCHED_SUCCESSFULLY);
     }
 
     @Override

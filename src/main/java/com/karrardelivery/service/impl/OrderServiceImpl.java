@@ -17,6 +17,8 @@ import com.karrardelivery.service.OrderService;
 import com.karrardelivery.controller.spec.OrderSpec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,11 +56,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public GenericResponse<List<OrderDto>> getAllOrders(OrderSpec spec) {
+    public GenericResponse<List<OrderDto>> getAllOrders(OrderSpec spec, Pageable pageable) {
         Specification<Order> specification = Specification.where(spec);
-        List<Order> orderList = orderRepository.findAll(specification);
-        List<OrderDto> result = orderMapper.toDtoList(orderList);
-        return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
+        Page<Order> orderList = orderRepository.findAll(specification, pageable);
+        Page<OrderDto> result = orderMapper.mapToDtoPageable(orderList);
+        return GenericResponse.successResponseWithPagination(
+                result.getContent(),
+                result,
+                DATA_FETCHED_SUCCESSFULLY
+        );
     }
 
     @Override

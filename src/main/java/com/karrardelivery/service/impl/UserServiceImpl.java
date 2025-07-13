@@ -1,5 +1,6 @@
 package com.karrardelivery.service.impl;
 
+import com.karrardelivery.controller.spec.UserSpec;
 import com.karrardelivery.dto.ChangePasswordRequest;
 import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.UserDto;
@@ -10,6 +11,8 @@ import com.karrardelivery.repository.UserRepository;
 import com.karrardelivery.service.MessageService;
 import com.karrardelivery.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -69,9 +72,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GenericResponse<List<UserDto>> getAllUsers() {
-        List<UserDto> userDtos = userMapper.toDtoList(userRepository.findAllByDeletedFalse());
-        return GenericResponse.successResponse(userDtos, messageService.getMessage(DATA_FETCHED_SUCCESSFULLY));
+    public GenericResponse<List<UserDto>> getAllUsers(UserSpec userSpec, Pageable pageable) {
+        Page<UserDto> userDtos = userMapper.mapToDtoPageable(userRepository.findAll(userSpec, pageable));
+        return GenericResponse.successResponseWithPagination(userDtos.getContent(), userDtos, DATA_FETCHED_SUCCESSFULLY);
     }
 
     @Override

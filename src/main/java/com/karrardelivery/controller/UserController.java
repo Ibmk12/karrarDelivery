@@ -1,10 +1,13 @@
 package com.karrardelivery.controller;
 
+import com.karrardelivery.controller.spec.UserSpec;
 import com.karrardelivery.dto.ChangePasswordRequest;
 import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.UserDto;
 import com.karrardelivery.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +44,10 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<GenericResponse<List<UserDto>>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<GenericResponse<List<UserDto>>> getAllUsers(
+            UserSpec userSpec,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(userService.getAllUsers(userSpec, pageable));
     }
 
     @PutMapping(DISABLE_USERS)

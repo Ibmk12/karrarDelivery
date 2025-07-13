@@ -9,6 +9,8 @@ import com.karrardelivery.service.TraderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +33,8 @@ public class TraderController {
     }
 
     @GetMapping
-    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec) {
-        return traderService.getAllTraders(spec);
+    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec, @PageableDefault(size = 10) Pageable pageable) {
+        return traderService.getAllTraders(spec, pageable);
     }
 
     @GetMapping("/{id}")

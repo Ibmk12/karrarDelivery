@@ -2,22 +2,16 @@ package com.karrardelivery.controller;
 
 import com.karrardelivery.constant.ApiUrls;
 import com.karrardelivery.dto.*;
-import com.karrardelivery.entity.Order;
 import com.karrardelivery.service.OrderService;
 import com.karrardelivery.controller.spec.OrderSpec;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-
 import static com.karrardelivery.constant.ApiUrls.*;
 
 @RestController
@@ -37,8 +31,10 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<GenericResponse<List<OrderDto>>> getAllOrders(OrderSpec spec) {
-        return ResponseEntity.ok(orderService.getAllOrders(spec));
+    public ResponseEntity<GenericResponse<List<OrderDto>>> getAllOrders(
+            OrderSpec spec,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(orderService.getAllOrders(spec, pageable));
     }
 
     @GetMapping("/{id}")
