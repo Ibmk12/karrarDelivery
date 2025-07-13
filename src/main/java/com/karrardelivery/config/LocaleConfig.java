@@ -21,13 +21,4 @@ public class LocaleConfig {
         return resolver;
     }
 
-    @Bean
-    public ResourceBundleMessageSource messageSource() {
-        final var messageSource = new ResourceBundleMessageSource();
-        messageSource.setDefaultEncoding("utf-8");
-        messageSource.setBasename("messages");
-        return messageSource;
-    }
-
-
 }
