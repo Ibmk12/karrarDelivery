@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -69,7 +70,9 @@ public class JwtFilter extends OncePerRequestFilter {
             sendErrorResponse(response, EXPIRED_JWT_TOKEN_ERR_CODE, "jwt.token.expired", HttpServletResponse.SC_UNAUTHORIZED);
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
             sendErrorResponse(response, INVALID_JWT_TOKEN_ERR_CODE, "jwt.token.invalid", HttpServletResponse.SC_UNAUTHORIZED);
-        } catch (Exception e) {
+        } catch (DisabledException e) {
+            sendErrorResponse(response, DISABLED_USER_ERR_CODE, "user.disabled", HttpServletResponse.SC_UNAUTHORIZED);
+        }catch (Exception e) {
             sendErrorResponse(response, FAILED_AUTH_ERR_CODE, "jwt.auth.failed", HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

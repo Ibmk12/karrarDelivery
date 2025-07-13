@@ -12,4 +12,5 @@ public class ErrorCodes {
     public static final Integer EXPIRED_JWT_TOKEN_ERR_CODE = 1001;
     public static final Integer INVALID_JWT_TOKEN_ERR_CODE = 1002;
     public static final Integer FAILED_AUTH_ERR_CODE = 1003;
+    public static final Integer DISABLED_USER_ERR_CODE = 1004;
 }
