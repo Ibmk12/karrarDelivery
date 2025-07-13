@@ -12,10 +12,10 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${jwt.access-expiration.milliseconds}")
+    @Value("${jwt.access-expiration.minutes}")
     private long accessTokenExpiration;
 
-    @Value("${jwt.refresh-expiration.milliseconds}")
+    @Value("${jwt.refresh-expiration.minutes}")
     private long refreshTokenExpiration;
 
     public String generateAccessToken(String phone) {
@@ -31,7 +31,7 @@ public class JwtUtil {
                 .setSubject(phone)
                 .claim("type", type)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .setExpiration(new Date(System.currentTimeMillis() + (expirationMillis * 60 * 1000) ))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
