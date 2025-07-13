@@ -5,7 +5,7 @@ import com.karrardelivery.dto.ErrorDto;
 import com.karrardelivery.dto.ErrorListDto;
 import com.karrardelivery.security.JwtUtil;
 import com.karrardelivery.service.MessageService;
-import com.karrardelivery.service.UserDetailsServiceImpl;
+import com.karrardelivery.service.impl.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -44,6 +44,11 @@ public class JwtFilter extends OncePerRequestFilter {
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
                 String phone = jwtUtil.extractPhone(token);
+                String tokenType = jwtUtil.extractTokenType(token);
+                if (!"access".equals(tokenType)) {
+                    sendErrorResponse(response, INVALID_JWT_TOKEN_ERR_CODE, "jwt.token.invalid.type", HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
 
                 if (phone != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     var userDetails = userDetailsService.loadUserByUsername(phone);

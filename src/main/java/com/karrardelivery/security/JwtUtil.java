@@ -1,8 +1,6 @@
 package com.karrardelivery.security;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,16 +19,17 @@ public class JwtUtil {
     private long refreshTokenExpiration;
 
     public String generateAccessToken(String phone) {
-        return generateToken(phone, accessTokenExpiration);
+        return generateToken(phone, accessTokenExpiration, "access");
     }
 
     public String generateRefreshToken(String phone) {
-        return generateToken(phone, refreshTokenExpiration);
+        return generateToken(phone, refreshTokenExpiration, "refresh");
     }
 
-    private String generateToken(String phone, long expirationMillis) {
+    private String generateToken(String phone, long expirationMillis, String type) {
         return Jwts.builder()
                 .setSubject(phone)
+                .claim("type", type)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -38,19 +37,26 @@ public class JwtUtil {
     }
 
     public String extractPhone(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        return getClaims(token).getSubject();
+    }
+
+    public String extractTokenType(String token) {
+        return (String) getClaims(token).get("type");
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            getClaims(token); // throws if invalid
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

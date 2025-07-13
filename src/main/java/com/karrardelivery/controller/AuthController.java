@@ -20,8 +20,6 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest) {
@@ -32,7 +30,7 @@ public class AuthController {
                 )
         );
         var accessToken = jwtUtil.generateAccessToken(authRequest.getPhone());
-        var refreshToken = jwtUtil.generateRefreshToken(authRequest.getPhone()); // you can generate it differently
+        var refreshToken = jwtUtil.generateRefreshToken(authRequest.getPhone());
         return new AuthResponse(accessToken, refreshToken);
     }
 

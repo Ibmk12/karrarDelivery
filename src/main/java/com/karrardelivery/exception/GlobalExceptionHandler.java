@@ -2,9 +2,12 @@ package com.karrardelivery.exception;
 
 import com.karrardelivery.dto.ErrorDto;
 import com.karrardelivery.dto.ErrorListDto;
+import com.karrardelivery.service.MessageService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,7 +21,10 @@ import static com.karrardelivery.constant.ErrorCodes.VALIDATION_ERR_CODE;
 
 @Slf4j
 @ControllerAdvice
+@AllArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final MessageService messageService;
 
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<ErrorListDto> handleRuntimeException(RuntimeException e) {
@@ -27,6 +33,18 @@ public class GlobalExceptionHandler {
         ErrorDto ErrorDto = com.karrardelivery.dto.ErrorDto.builder()
                 .errorCode(Integer.toString(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .errorMessage(e.getMessage())
+                .build();
+        ErrorListDto.getErrorDtoList().add(ErrorDto);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorListDto);
+    }
+
+    @ExceptionHandler({BadCredentialsException.class})
+    public ResponseEntity<ErrorListDto> handleBadCredentialsException(RuntimeException e) {
+        log.error("inside handleBadCredentialsException exception message: {}", e.getMessage(), e);
+        ErrorListDto ErrorListDto = new ErrorListDto();
+        ErrorDto ErrorDto = com.karrardelivery.dto.ErrorDto.builder()
+                .errorCode(Integer.toString(HttpStatus.FORBIDDEN.value()))
+                .errorMessage(messageService.getMessage("auth.bad.credentials"))
                 .build();
         ErrorListDto.getErrorDtoList().add(ErrorDto);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorListDto);

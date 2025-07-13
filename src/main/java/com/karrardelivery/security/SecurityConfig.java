@@ -1,7 +1,7 @@
 package com.karrardelivery.security;
 
 import com.karrardelivery.filter.JwtFilter;
-import com.karrardelivery.service.UserDetailsServiceImpl;
+import com.karrardelivery.service.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
