@@ -16,4 +16,8 @@ public class ApiUrls {
     public final static String ENABLE_USERS =  "/{id}/enable";
     public final static String DISABLE_USERS = "/{id}/disable";
     public final static String CHANGE_PASSWORD = "/change-password";
+    public final static String AUTH = BASE_URL + "auth";
+    public final static String LOGIN = "/login";
+    public final static String REFRESH = "/refresh";
+
 }

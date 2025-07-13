@@ -59,4 +59,14 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    public boolean isRefreshToken(String token) {
+        try {
+            var claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+            return "refresh".equals(claims.get("type", String.class));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }
