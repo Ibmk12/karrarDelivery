@@ -12,4 +12,8 @@ public class ApiUrls {
     public final static String DAILY_REPORT = "/daily-report";
     public final static String LOGO_PATH = "/static/logo.png";
     public final static String ORDER_META_DATA = "/metadata";
+    public final static String USERS = BASE_URL + "users";
+    public final static String ENABLE_USERS =  "/{id}/enable";
+    public final static String DISABLE_USERS = "/{id}/disable";
+    public final static String CHANGE_PASSWORD = "/change-password";
 }

@@ -12,15 +12,26 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final MessageService messageService;
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        return userRepository.findByPhone(phone)
-                .map(user -> org.springframework.security.core.userdetails.User
-                        .withUsername(user.getPhone())
-                        .password(user.getPassword())
-                        .roles(user.getRole())
-                        .build())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userRepository.findByPhoneAndDeletedFalse(phone)
+                .map(user -> {
+                    if (!user.isEnabled()) {
+                        throw new UsernameNotFoundException(
+                                messageService.getMessage("user.disabled")
+                        );
+                    }
+                    return org.springframework.security.core.userdetails.User
+                            .withUsername(user.getPhone())
+                            .password(user.getPassword())
+                            .roles(user.getRole())
+                            .build();
+                })
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        messageService.getMessage("user.not.found")
+                ));
     }
+
 }

@@ -36,27 +36,4 @@ public class AuthController {
         return new AuthResponse(accessToken, refreshToken);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User request) {
-        if (userRepository.findByPhone(request.getPhone()).isPresent()) {
-            return ResponseEntity.badRequest().body("Phone number already in use");
-        }
-
-        User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setMiddleName(request.getMiddleName());
-        user.setLastName(request.getLastName());
-        user.setPhone(request.getPhone());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // Secure password
-        user.setRole(request.getRole());
-        user.setEnabled(true);
-        user.setDeleted(false);
-
-        userRepository.save(user);
-
-        return ResponseEntity.ok("User registered successfully");
-    }
-
-
 }
