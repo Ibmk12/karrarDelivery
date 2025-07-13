@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
 --changeset ibmk:order-006
---comment: Alter traders table, add code column
+--comment: Added user table
 
 CREATE TABLE user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
