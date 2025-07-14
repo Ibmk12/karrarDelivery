@@ -33,4 +33,14 @@ public class ExportController {
             log.error("Error exporting order report", e);
         }
     }
+
+    @GetMapping(ORDER_REPORT)
+    public void getOrdersReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            orderExcelExportService.generateOrderReport(spec, response);
+        } catch (Exception e) {
+            log.error("Error exporting order report", e);
+        }
+    }
+
 }

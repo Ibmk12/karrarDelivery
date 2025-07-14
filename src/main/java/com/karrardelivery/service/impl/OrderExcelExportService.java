@@ -1,5 +1,6 @@
 package com.karrardelivery.service.impl;
 
+import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.controller.spec.OrderSpec;
 import com.karrardelivery.service.MessageService;
@@ -7,7 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -132,4 +137,71 @@ public class OrderExcelExportService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         return baseName + "-" + now.format(formatter) + "." + extension;
     }
+
+    public void generateOrderReport(OrderSpec orderSpec, HttpServletResponse response) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Orders");
+
+            List<OrderDto> orders = orderReportDataService.fetchOrderListData(orderSpec);
+            // Translate headers
+            String[] headerKeys = {
+                    "order.report.id", "order.report.invoiceNo", "order.report.deliveryAgent",
+                    "order.report.orderDate", "order.report.deliveryDate", "order.report.address",
+                    "order.report.emirate",
+                    "order.report.traderId", "order.report.deliveryStatus", "order.report.totalAmount",
+                    "order.report.traderAmount", "order.report.deliveryAmount", "order.report.agentAmount",
+                    "order.report.netCompanyAmount", "order.report.customerPhoneNo", "order.report.comment"
+            };
+
+            String[] headers = Arrays.stream(headerKeys)
+                    .map(messageService::getMessage)
+                    .toArray(String[]::new);
+
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+            }
+
+            // Create rows for data
+            int rowIdx = 1;
+            for (OrderDto dto : orders) {
+                Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(dto.getId());
+                row.createCell(1).setCellValue(dto.getInvoiceNo());
+                row.createCell(2).setCellValue(dto.getDeliveryAgent());
+                row.createCell(3).setCellValue(dto.getOrderDate() != null ? dto.getOrderDate().toString() : "");
+                row.createCell(4).setCellValue(dto.getDeliveryDate() != null ? dto.getDeliveryDate().toString() : "");
+                row.createCell(5).setCellValue(dto.getAddress());
+                row.createCell(6).setCellValue(dto.getEmirate());
+                row.createCell(7).setCellValue(dto.getTraderId() != null ? dto.getTraderId().toString() : "");
+                row.createCell(8).setCellValue(dto.getDeliveryStatus());
+                row.createCell(9).setCellValue(dto.getTotalAmount() != null ? dto.getTotalAmount() : 0);
+                row.createCell(10).setCellValue(dto.getTraderAmount() != null ? dto.getTraderAmount() : 0);
+                row.createCell(11).setCellValue(dto.getDeliveryAmount() != null ? dto.getDeliveryAmount() : 0);
+                row.createCell(12).setCellValue(dto.getAgentAmount() != null ? dto.getAgentAmount() : 0);
+                row.createCell(13).setCellValue(dto.getNetCompanyAmount() != null ? dto.getNetCompanyAmount() : 0);
+                row.createCell(14).setCellValue(dto.getCustomerPhoneNo());
+                row.createCell(15).setCellValue(dto.getComment());
+            }
+
+            // Auto-size columns
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            excelFormattingService.addTableBordersAndBoldHeader(sheet);
+            // Write to HTTP response
+            String fileName = "orders-report-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".xlsx";
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            workbook.write(response.getOutputStream());
+            response.getOutputStream().flush();
+        } catch (Exception e) {
+            log.error("Error generating order report: {}", e.getMessage(), e);
+            throw new RuntimeException("Error generating order report", e);
+        }
+    }
+
 }

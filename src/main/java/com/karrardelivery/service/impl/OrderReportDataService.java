@@ -3,14 +3,17 @@ package com.karrardelivery.service.impl;
 import com.karrardelivery.common.utility.BeanUtilsHelper;
 import com.karrardelivery.controller.spec.OrderSpec;
 import com.karrardelivery.dto.GenericResponse;
+import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.entity.Order;
+import com.karrardelivery.mapper.OrderMapper;
 import com.karrardelivery.mapper.OrderReportMapper;
 import com.karrardelivery.repository.OrderRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,6 +30,7 @@ public class OrderReportDataService {
     private final OrderRepository orderRepository;
     private final OrderReportMapper orderReportMapper;
     private final HttpServletRequest request;
+    private final OrderMapper orderMapper;
 
     public List<OrderReportDto> fetchReportData(OrderSpec spec) {
         LocalDateTime[] deliveryRange = extractDeliveryRange();
@@ -71,5 +75,11 @@ public class OrderReportDataService {
         if (dtos != null && !dtos.isEmpty()) {
             dtos.get(0).setOrderDate(Date.from(startOfDay.atZone(ZoneId.systemDefault()).toInstant()));
         }
+    }
+
+    public List<OrderDto> fetchOrderListData(OrderSpec spec) {
+        Specification<Order> specification = Specification.where(spec);
+        List<Order> orderList = orderRepository.findAll(specification);
+        return orderMapper.toDtoList(orderList);
     }
 }

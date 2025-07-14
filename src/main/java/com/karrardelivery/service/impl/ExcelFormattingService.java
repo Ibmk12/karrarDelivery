@@ -136,4 +136,38 @@ public class ExcelFormattingService {
             log.error("Unexpected error while inserting logo from path: {}", logoPath, e);
         }
     }
+
+    public void addTableBordersAndBoldHeader(Sheet sheet) {
+        Workbook workbook = sheet.getWorkbook();
+
+        // Create border style
+        CellStyle borderedStyle = workbook.createCellStyle();
+        borderedStyle.setBorderTop(BorderStyle.THIN);
+        borderedStyle.setBorderBottom(BorderStyle.THIN);
+        borderedStyle.setBorderLeft(BorderStyle.THIN);
+        borderedStyle.setBorderRight(BorderStyle.THIN);
+
+        // Clone original font and make it bold for header
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.cloneStyleFrom(borderedStyle);
+        headerStyle.setFont(headerFont);
+
+        int lastRowNum = sheet.getLastRowNum();
+
+        for (int rowIndex = 0; rowIndex <= lastRowNum; rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            for (int colIndex = 0; colIndex < row.getLastCellNum(); colIndex++) {
+                Cell cell = row.getCell(colIndex);
+                if (cell == null) continue;
+
+                // Apply header style to first row, border style otherwise
+                cell.setCellStyle(rowIndex == 0 ? headerStyle : borderedStyle);
+            }
+        }
+    }
+
 }

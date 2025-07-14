@@ -71,29 +71,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public GenericResponse<OrderReportDtoList> getOrderReport(OrderSpec spec) {
-        Specification<Order> specification = Specification.where(spec);
-        List<Order> orderList = orderRepository.findAll(specification);
-        List<OrderReportDto> report = orderReportMapper.toDtoList(orderList);
-        OrderReportDtoList resultReport = populateOrderReportTotals(report);
-        return GenericResponse.successResponse(resultReport, DATA_FETCHED_SUCCESSFULLY);
-    }
-
-    @Override
-    public GenericResponse<OrderReport> getOrderReportPerStatus(OrderSpec spec) {
-        Specification<Order> specification = Specification.where(spec);
-        List<Order> orderList = orderRepository.findAll(specification);
-        List<OrderReportDto> orderListDto = orderReportMapper.toDtoList(orderList);
-
-        OrderReport report = new OrderReport();
-        report.setDeliveredOrders(getOrdersByStatus(orderListDto, EDeliveryStatus.DELIVERED));
-        report.setUnderdeliveryOrders(getOrdersByStatus(orderListDto, EDeliveryStatus.UNDER_DELIVERY));
-        report.setCancelledOrders(getOrdersByStatus(orderListDto, EDeliveryStatus.CANCELED));
-
-        return GenericResponse.successResponse(report, DATA_FETCHED_SUCCESSFULLY);
-    }
-
-    @Override
     public GenericResponse<OrderDto> getOrderById(Long id) {
         Order order = getOrderByIdOrThrow(id);
         OrderDto result = orderMapper.toDto(order);

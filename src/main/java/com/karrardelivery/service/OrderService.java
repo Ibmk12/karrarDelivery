@@ -17,8 +17,6 @@ public interface OrderService {
     void deleteOrder(Long id);
     GenericResponse<String> createOrder(OrderDto orderDto);
     GenericResponse<List<OrderDto>> getAllOrders(OrderSpec spec, Pageable pageable);
-    GenericResponse<OrderReportDtoList> getOrderReport(OrderSpec spec);
-    GenericResponse<OrderReport> getOrderReportPerStatus(OrderSpec spec);
     GenericResponse<OrderDto> getOrderById(Long id);
     GenericResponse<String> updateOrderListStatus(UpdatedOrderStatusRequest request);
     GenericResponse<String> updateOrderStatus(OrderDto request);
