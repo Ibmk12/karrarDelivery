@@ -2,18 +2,23 @@ package com.karrardelivery.service.impl;
 
 import com.karrardelivery.common.utility.BeanUtilsHelper;
 import com.karrardelivery.controller.spec.OrderSpec;
+import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.mapper.OrderReportMapper;
 import com.karrardelivery.repository.OrderRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+
+import static com.karrardelivery.constant.Messages.DATA_FETCHED_SUCCESSFULLY;
 
 @Service
 @RequiredArgsConstructor
@@ -24,25 +29,47 @@ public class OrderReportDataService {
     private final HttpServletRequest request;
 
     public List<OrderReportDto> fetchReportData(OrderSpec spec) {
-        // Extract and validate delivery date range
-        LocalDateTime[] deliveryRange = BeanUtilsHelper.getDeliveryDateRange(request);
-        LocalDateTime startOfDay = deliveryRange[0];
-        LocalDateTime endOfDay = deliveryRange[1];
+        LocalDateTime[] deliveryRange = extractDeliveryRange();
+        String traderName = extractTraderName();
 
-        // Extract trader name
+        List<Order> orders = orderRepository.findCustomOrders(
+                traderName.trim(), deliveryRange[0], deliveryRange[1]);
+
+        List<OrderReportDto> dtos = orderReportMapper.toDtoList(orders);
+        setOrderDateIfNotEmpty(dtos, deliveryRange[0]);
+
+        return dtos;
+    }
+
+    public GenericResponse<List<OrderReportDto>> getDailyReport(OrderSpec spec, Pageable pageable) {
+        LocalDateTime[] deliveryRange = extractDeliveryRange();
+        String traderName = extractTraderName();
+
+        Page<Order> ordersPage = orderRepository.findCustomOrders(
+                traderName.trim(), deliveryRange[0], deliveryRange[1], pageable);
+
+        Page<OrderReportDto> dtoPage = orderReportMapper.mapToDtoPageable(ordersPage);
+        List<OrderReportDto> dtoList = dtoPage.getContent();
+        setOrderDateIfNotEmpty(dtoList, deliveryRange[0]);
+
+        return GenericResponse.successResponseWithPagination(dtoList, dtoPage, DATA_FETCHED_SUCCESSFULLY);
+    }
+
+    private LocalDateTime[] extractDeliveryRange() {
+        return BeanUtilsHelper.getDeliveryDateRange(request);
+    }
+
+    private String extractTraderName() {
         String traderName = request.getParameter("traderName");
         if (traderName == null || traderName.isBlank()) {
             throw new IllegalArgumentException("Trader name is required");
         }
+        return traderName;
+    }
 
-        // Fetch orders using custom native query
-        List<Order> orders = orderRepository.findCustomOrders(traderName.trim(), startOfDay, endOfDay);
-
-        // Map entities to DTOs
-        List<OrderReportDto> dtos = orderReportMapper.toDtoList(orders);
-        if(dtos != null && !dtos.isEmpty())
+    private void setOrderDateIfNotEmpty(List<OrderReportDto> dtos, LocalDateTime startOfDay) {
+        if (dtos != null && !dtos.isEmpty()) {
             dtos.get(0).setOrderDate(Date.from(startOfDay.atZone(ZoneId.systemDefault()).toInstant()));
-
-        return dtos;
+        }
     }
 }

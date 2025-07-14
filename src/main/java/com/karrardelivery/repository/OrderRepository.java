@@ -1,6 +1,8 @@
 package com.karrardelivery.repository;
 
 import com.karrardelivery.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -44,5 +46,54 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay
     );
+
+    @Query(
+            value = """
+        SELECT * FROM (
+            SELECT o.*, o.order_date AS orderDateAlias
+            FROM orders o
+            JOIN trader t ON o.trader_id = t.id
+            WHERE o.delivery_status = 'UNDER_DELIVERY'
+              AND t.name = :traderName
+
+            UNION ALL
+
+            SELECT o.*, o.order_date AS orderDateAlias
+            FROM orders o
+            JOIN trader t ON o.trader_id = t.id
+            WHERE o.delivery_status != 'UNDER_DELIVERY'
+              AND t.name = :traderName
+              AND o.delivery_date >= :startOfDay
+              AND o.delivery_date <= :endOfDay
+        ) AS combined_orders
+        """,
+            countQuery = """
+        SELECT COUNT(*) FROM (
+            SELECT o.id
+            FROM orders o
+            JOIN trader t ON o.trader_id = t.id
+            WHERE o.delivery_status = 'UNDER_DELIVERY'
+              AND t.name = :traderName
+
+            UNION ALL
+
+            SELECT o.id
+            FROM orders o
+            JOIN trader t ON o.trader_id = t.id
+            WHERE o.delivery_status != 'UNDER_DELIVERY'
+              AND t.name = :traderName
+              AND o.delivery_date >= :startOfDay
+              AND o.delivery_date <= :endOfDay
+        ) AS count_query
+        """,
+            nativeQuery = true
+    )
+    Page<Order> findCustomOrders(
+            @Param("traderName") String traderName,
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endOfDay") LocalDateTime endOfDay,
+            Pageable pageable
+    );
+
 
 }

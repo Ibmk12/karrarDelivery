@@ -4,9 +4,11 @@ import com.karrardelivery.constant.ApiUrls;
 import com.karrardelivery.dto.*;
 import com.karrardelivery.service.OrderService;
 import com.karrardelivery.controller.spec.OrderSpec;
+import com.karrardelivery.service.impl.OrderReportDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import static com.karrardelivery.constant.ApiUrls.*;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderReportDataService orderReportDataService;
 
     @PostMapping
     public ResponseEntity<GenericResponse<String>> createOrder(@RequestBody OrderDto orderDto) {
@@ -33,7 +36,7 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<GenericResponse<List<OrderDto>>> getAllOrders(
             OrderSpec spec,
-            @PageableDefault(size = 10) Pageable pageable) {
+            @PageableDefault(sort = "orderDate", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
         return ResponseEntity.ok(orderService.getAllOrders(spec, pageable));
     }
 
@@ -64,6 +67,13 @@ public class OrderController {
     public ResponseEntity<GenericResponse<String>> updateOrderStatus(@RequestBody OrderDto request) {
         orderService.updateOrderStatus(request);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(DAILY_REPORT)
+    public ResponseEntity<GenericResponse<List<OrderReportDto>>> getDailyReport(
+            OrderSpec spec,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(orderReportDataService.getDailyReport(spec, pageable));
     }
 
     @GetMapping(REPORT)
