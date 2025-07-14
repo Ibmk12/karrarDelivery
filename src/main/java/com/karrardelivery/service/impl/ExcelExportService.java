@@ -13,11 +13,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.karrardelivery.constant.Constants.SIGNATURE;
+
 @Service
 @Data
 public class ExcelExportService {
-
-    public static final String SIGNATURE = "Account signature: _________________________Client Signature__________________________________";
 
     public static class Section<T> {
         public final String title;
