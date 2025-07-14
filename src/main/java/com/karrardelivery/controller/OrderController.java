@@ -81,6 +81,14 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderReport(spec));
     }
 
+    @GetMapping(UNDER_DELIVERY)
+    public ResponseEntity<GenericResponse<List<OrderDto>>> getOrdersUnderDeliveryLongerThan(
+            OrderSpec orderSpec,
+            @RequestParam(value = "days", required = false) Integer days,
+            @PageableDefault(sort = "orderDate", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+        return ResponseEntity.ok(orderService.getOrdersUnderDeliveryLongerThan(days, pageable));
+    }
+
     @GetMapping(REPORT_STATUS)
     public ResponseEntity<GenericResponse<OrderReport>> getOrderReportPerStatus(OrderSpec spec) {
         return ResponseEntity.ok(orderService.getOrderReportPerStatus(spec));

@@ -22,4 +22,6 @@ public interface OrderService {
     GenericResponse<OrderDto> getOrderById(Long id);
     GenericResponse<String> updateOrderListStatus(UpdatedOrderStatusRequest request);
     GenericResponse<String> updateOrderStatus(OrderDto request);
+    GenericResponse<List<OrderDto>> getOrdersUnderDeliveryLongerThan(Integer numberOfDays, Pageable pageable);
+
 }

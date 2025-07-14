@@ -22,7 +22,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -227,6 +230,23 @@ public class OrderServiceImpl implements OrderService {
         updateAndRecalculateAmounts(order, request);
         orderRepository.save(order);
         return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
+    }
+
+    @Override
+    public GenericResponse<List<OrderDto>> getOrdersUnderDeliveryLongerThan(Integer numberOfDays, Pageable pageable) {
+        if (numberOfDays == null || numberOfDays <= 0) {
+            numberOfDays = 2;
+        }
+
+        LocalDate localThresholdDate = LocalDate.now().minusDays(numberOfDays);
+        Date thresholdDate = Date.from(localThresholdDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Page<Order> orders = orderRepository.findByDeliveryStatusAndOrderDateBefore(
+                EDeliveryStatus.UNDER_DELIVERY, thresholdDate, pageable);
+
+        Page<OrderDto> orderDtos = orderMapper.mapToDtoPageable(orders);
+        return GenericResponse.successResponseWithPagination(
+                orderDtos.getContent(), orderDtos, DATA_FETCHED_SUCCESSFULLY);
     }
 
     public Order getOrderByIdOrThrow(Long id) {

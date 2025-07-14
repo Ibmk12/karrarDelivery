@@ -1,6 +1,7 @@
 package com.karrardelivery.repository;
 
 import com.karrardelivery.entity.Order;
+import com.karrardelivery.entity.enums.EDeliveryStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -95,5 +96,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
             Pageable pageable
     );
 
+    Page<Order> findByDeliveryStatusAndOrderDateBefore(EDeliveryStatus deliveryStatus, Date date, Pageable pageable);
 
 }
