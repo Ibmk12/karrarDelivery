@@ -21,5 +21,6 @@ public class TraderDto {
 
     private String description;
 
+    @NotBlank(message = "Code is required")
     private String code;
 }

@@ -33,6 +33,12 @@ public class TraderServiceImpl implements TraderService {
         if(traderRepository.existsByPhoneNumberAndDeleted(traderDto.getPhoneNumber(), false))
             throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.phone.err.msg"), DUPLICATE_TRADER_PHONE_NUMBER_ERR_CODE);
 
+        if(traderRepository.existsByNameAndDeleted(traderDto.getName(), false))
+            throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.name.err.msg"), DUPLICATE_TRADER_NAME_ERR_CODE);
+
+        if(traderRepository.existsByCodeAndDeleted(traderDto.getCode(), false))
+            throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.code.err.msg"), DUPLICATE_TRADER_CODE_ERR_CODE);
+
         if(traderRepository.existsByEmailAndDeleted(traderDto.getEmail(), false))
             throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.email.err.msg"), DUPLICATE_TRADER_EMAIL_ERR_CODE);
 
@@ -65,6 +71,14 @@ public class TraderServiceImpl implements TraderService {
         }
         if(traderRepository.existsByEmailAndDeletedAndIdNot(traderDto.getEmail(), false, id)) {
             throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.email.err.msg"), DUPLICATE_TRADER_EMAIL_ERR_CODE);
+        }
+
+        if(traderRepository.existsByCodeAndDeletedAndIdNot(traderDto.getEmail(), false, id)) {
+            throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.code.err.msg"), DUPLICATE_TRADER_CODE_ERR_CODE);
+        }
+
+        if(traderRepository.existsByNameAndDeletedAndIdNot(traderDto.getEmail(), false, id)) {
+            throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.name.err.msg"), DUPLICATE_TRADER_NAME_ERR_CODE);
         }
 
         traderMapper.mapToUpdate(trader, traderDto);
