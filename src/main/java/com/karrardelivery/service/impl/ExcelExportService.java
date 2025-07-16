@@ -112,22 +112,22 @@ public class ExcelExportService {
 
     private int writeSectionMetadata(Sheet sheet, Section<?> section, int rowIdx, CellStyle style) {
         Row metaRow = sheet.createRow(rowIdx++);
-        int dateStartCol = 2;
-        int dateEndCol = 6;
+        int dateStartCol = 1;
+        int dateEndCol = 5;
         int statusStartCol = dateEndCol + 1;
         int statusEndCol = statusStartCol + 3;
 
         // Date cell
-        Cell dateCell = metaRow.createCell(dateStartCol - 2);
+        Cell dateCell = metaRow.createCell(dateStartCol - 1);
         dateCell.setCellValue(((OrderReportDto)section.data.get(0)).getDeliveryDate());
         sheet.addMergedRegion(new CellRangeAddress(metaRow.getRowNum(), metaRow.getRowNum(), dateStartCol, dateEndCol));
-        applyMergedStyle(metaRow, dateStartCol - 2, dateEndCol - 2, style);
+        applyMergedStyle(metaRow, dateStartCol - 1, dateEndCol - 1, style);
 
         // Status cell
-        Cell statusCell = metaRow.createCell(statusStartCol - 2);
+        Cell statusCell = metaRow.createCell(statusStartCol - 1);
         statusCell.setCellValue(getTraderNameFromSection(section));
         sheet.addMergedRegion(new CellRangeAddress(metaRow.getRowNum(), metaRow.getRowNum(), statusStartCol, statusEndCol));
-        applyMergedStyle(metaRow, statusStartCol - 2, statusEndCol - 2, style);
+        applyMergedStyle(metaRow, statusStartCol - 1, statusEndCol - 1, style);
 
         return rowIdx;
     }
@@ -205,13 +205,13 @@ public class ExcelExportService {
     private int writeSheetFooter(Sheet sheet, Section<?> section, int rowIdx, CellStyle style) {
         rowIdx--;
         Row metaRow = sheet.createRow(rowIdx++);
-        int dateStartCol = 2;
-        int dateEndCol = 10;
+        int dateStartCol = 1;
+        int dateEndCol = 9;
 
         int startRow = metaRow.getRowNum();
         int endRow = startRow + 1; // merge with next row
 
-        Cell dateCell = metaRow.createCell(dateStartCol - 2);
+        Cell dateCell = metaRow.createCell(dateStartCol - 1);
         dateCell.setCellValue(SIGNATURE);
 
         // Create the merged region
@@ -226,11 +226,11 @@ public class ExcelExportService {
         centeredStyle.setAlignment(HorizontalAlignment.CENTER);
         centeredStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
-        applyMergedStyle(metaRow, dateStartCol - 2, dateEndCol - 2, centeredStyle);
+        applyMergedStyle(metaRow, dateStartCol - 1, dateEndCol - 1, centeredStyle);
         Row nextRow = sheet.createRow(rowIdx++); // create the second row that's part of the merge
 
         // Apply borders around the merged region using RegionUtil
-        CellRangeAddress styleMergedRegion = new CellRangeAddress(startRow, endRow, dateStartCol - 2, dateEndCol - 2);
+        CellRangeAddress styleMergedRegion = new CellRangeAddress(startRow, endRow, dateStartCol - 1, dateEndCol - 1);
         RegionUtil.setBorderTop(BorderStyle.THICK, styleMergedRegion, sheet);
         RegionUtil.setBorderBottom(BorderStyle.THICK, styleMergedRegion, sheet);
         RegionUtil.setBorderLeft(BorderStyle.THICK, styleMergedRegion, sheet);

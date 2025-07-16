@@ -12,8 +12,8 @@ import java.io.InputStream;
 @Slf4j
 public class ExcelFormattingService {
 
-    private static final int START_ROW = 2;
-    private static final int START_COL = 2;
+    private static final int START_ROW = 7;
+    private static final int START_COL = 1;
 
     public void centerSheetLayout(Sheet sheet) {
         int maxCol = getMaxColumnCount(sheet);
@@ -105,10 +105,10 @@ public class ExcelFormattingService {
             ClientAnchor anchor = helper.createClientAnchor();
 
             // Set anchor position (columns C and D)
-            anchor.setCol1(0);  // Start column C (0-indexed, so 2 = column C)
+            anchor.setCol1(1);  // Start column C (0-indexed, so 2 = column C)
             anchor.setRow1(0);  // Start row
-            anchor.setCol2(2);  // End column (column D + 1, so 4 = after column D)
-            anchor.setRow2(8);  // End row (spans 3 rows)
+            anchor.setCol2(4);  // End column (column D + 1, so 4 = after column D)
+            anchor.setRow2(7);  // End row (spans 3 rows)
 
             // Set anchor type to move and resize with cells
             anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
