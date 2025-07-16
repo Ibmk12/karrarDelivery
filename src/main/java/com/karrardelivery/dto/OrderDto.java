@@ -24,6 +24,7 @@ public class OrderDto {
     private String latitude;
     private String emirate;
     private Long traderId;
+    private String traderName;
     private String deliveryStatus;
     private Double totalAmount;
     private Double traderAmount;

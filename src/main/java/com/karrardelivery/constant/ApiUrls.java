@@ -22,4 +22,5 @@ public class ApiUrls {
     public final static String LOGOUT = BASE_URL + "logout";
     public final static String UNDER_DELIVERY = "/under-delivery/longer-than";
     public final static String ORDER_REPORT = "/order-report";
+    public final static String UPLOAD_ORDERS = "/upload-orders";
 }

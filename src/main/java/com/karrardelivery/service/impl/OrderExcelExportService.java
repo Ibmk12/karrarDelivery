@@ -148,7 +148,7 @@ public class OrderExcelExportService {
                     "order.report.id", "order.report.invoiceNo", "order.report.deliveryAgent",
                     "order.report.orderDate", "order.report.deliveryDate", "order.report.address",
                     "order.report.emirate",
-                    "order.report.traderId", "order.report.deliveryStatus", "order.report.totalAmount",
+                    "order.report.traderName", "order.report.deliveryStatus", "order.report.totalAmount",
                     "order.report.traderAmount", "order.report.deliveryAmount", "order.report.agentAmount",
                     "order.report.netCompanyAmount", "order.report.customerPhoneNo", "order.report.comment"
             };
@@ -175,7 +175,7 @@ public class OrderExcelExportService {
                 row.createCell(4).setCellValue(dto.getDeliveryDate() != null ? dto.getDeliveryDate().toString() : "");
                 row.createCell(5).setCellValue(dto.getAddress());
                 row.createCell(6).setCellValue(dto.getEmirate());
-                row.createCell(7).setCellValue(dto.getTraderId() != null ? dto.getTraderId().toString() : "");
+                row.createCell(7).setCellValue(dto.getTraderName() != null ? dto.getTraderName() : "");
                 row.createCell(8).setCellValue(dto.getDeliveryStatus());
                 row.createCell(9).setCellValue(dto.getTotalAmount() != null ? dto.getTotalAmount() : 0);
                 row.createCell(10).setCellValue(dto.getTraderAmount() != null ? dto.getTraderAmount() : 0);
