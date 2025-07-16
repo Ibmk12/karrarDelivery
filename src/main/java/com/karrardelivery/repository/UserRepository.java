@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     boolean existsByPhoneAndDeletedFalse(String phone);
 
+    boolean existsByPhoneAndDeletedFalseAndIdNot(String phone, Long id);
+
     List<User> findAllByDeletedFalse();
 
     Optional<User> findByIdAndDeletedFalse(Long id);

@@ -14,12 +14,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -47,9 +49,8 @@ public class JwtFilter extends OncePerRequestFilter {
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
                 if (blacklistedTokenRepository.findByAccessToken(token).isPresent()) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write(messageService.getMessage("auth.token.invalidated"));
-                    return;
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                            messageService.getMessage("auth.token.invalidated"));
                 }
                 String phone = jwtUtil.extractPhone(token);
                 String tokenType = jwtUtil.extractTokenType(token);
@@ -79,6 +80,8 @@ public class JwtFilter extends OncePerRequestFilter {
             sendErrorResponse(response, INVALID_JWT_TOKEN_ERR_CODE, "jwt.token.invalid", HttpServletResponse.SC_UNAUTHORIZED);
         } catch (DisabledException e) {
             sendErrorResponse(response, DISABLED_USER_ERR_CODE, "user.disabled", HttpServletResponse.SC_UNAUTHORIZED);
+        }catch (ResponseStatusException e) {
+            sendErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), "auth.token.invalidated", HttpServletResponse.SC_UNAUTHORIZED);
         }catch (Exception e) {
             sendErrorResponse(response, FAILED_AUTH_ERR_CODE, "jwt.auth.failed", HttpServletResponse.SC_UNAUTHORIZED);
         }
