@@ -1,14 +1,10 @@
 package com.karrardelivery.mapper;
 
-import com.karrardelivery.dto.OrderDto;
-import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.dto.UserDto;
-import com.karrardelivery.entity.Order;
-import com.karrardelivery.entity.Trader;
 import com.karrardelivery.entity.management.User;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper extends IBaseMapper<User, UserDto> {
 
 

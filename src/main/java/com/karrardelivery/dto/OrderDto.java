@@ -1,12 +1,8 @@
 package com.karrardelivery.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.karrardelivery.entity.enums.EDeliveryStatus;
-import com.karrardelivery.entity.enums.EEmirate;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Setter

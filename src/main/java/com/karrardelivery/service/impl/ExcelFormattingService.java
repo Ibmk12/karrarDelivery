@@ -105,10 +105,10 @@ public class ExcelFormattingService {
             ClientAnchor anchor = helper.createClientAnchor();
 
             // Set anchor position (columns C and D)
-            anchor.setCol1(2);  // Start column C (0-indexed, so 2 = column C)
+            anchor.setCol1(0);  // Start column C (0-indexed, so 2 = column C)
             anchor.setRow1(0);  // Start row
-            anchor.setCol2(6);  // End column (column D + 1, so 4 = after column D)
-            anchor.setRow2(4);  // End row (spans 3 rows)
+            anchor.setCol2(2);  // End column (column D + 1, so 4 = after column D)
+            anchor.setRow2(8);  // End row (spans 3 rows)
 
             // Set anchor type to move and resize with cells
             anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
@@ -118,7 +118,7 @@ public class ExcelFormattingService {
             // Try different resize approaches
             try {
                 // Method 1: Use resize with scale factor
-                picture.resize(0.5); // 50% of original size
+                picture.resize(1); // 50% of original size
             } catch (Exception e) {
                 try {
                     // Method 2: Use resize with width/height factors

@@ -5,11 +5,10 @@ import com.karrardelivery.entity.Order;
 import org.mapstruct.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {EEmirateMapper.class, EDeliveryStatusMapper.class})
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {EEmirateMapper.class, EDeliveryStatusMapper.class})
 public interface OrderMapper extends IBaseMapper<Order, OrderDto> {
 
     @Mappings({
