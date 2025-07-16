@@ -181,14 +181,14 @@ public class ExcelExportService {
             }
             cell.setCellStyle(style);
         }
-        sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 2, 5));
+        sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 1, 4));
         return rowIdx;
     }
 
     private <T> int writeReceivedByTrader(Sheet sheet, Function<List<T>, Object[]> mapper, List<T> data, int rowIdx, CellStyle style) {
         writeTotals(sheet, mapper, data, rowIdx, style);
         Row row = sheet.getRow(rowIdx);
-        sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 6, 8));
+        sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 5, 7));
         return rowIdx + 1;
     }
 
