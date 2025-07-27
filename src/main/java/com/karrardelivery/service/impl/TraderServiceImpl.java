@@ -73,11 +73,11 @@ public class TraderServiceImpl implements TraderService {
             throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.email.err.msg"), DUPLICATE_TRADER_EMAIL_ERR_CODE);
         }
 
-        if(traderRepository.existsByCodeAndDeletedAndIdNot(traderDto.getEmail(), false, id)) {
+        if(traderRepository.existsByCodeAndDeletedAndIdNot(traderDto.getCode(), false, id)) {
             throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.code.err.msg"), DUPLICATE_TRADER_CODE_ERR_CODE);
         }
 
-        if(traderRepository.existsByNameAndDeletedAndIdNot(traderDto.getEmail(), false, id)) {
+        if(traderRepository.existsByNameAndDeletedAndIdNot(traderDto.getName(), false, id)) {
             throw new DuplicateResourceException(messageService.getMessage("duplicate.trader.name.err.msg"), DUPLICATE_TRADER_NAME_ERR_CODE);
         }
 
