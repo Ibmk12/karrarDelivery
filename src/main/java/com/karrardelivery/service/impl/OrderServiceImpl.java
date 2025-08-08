@@ -222,6 +222,23 @@ public class OrderServiceImpl implements OrderService {
         return GenericResponse.successResponseWithPagination(
                 orderDtos.getContent(), orderDtos, DATA_FETCHED_SUCCESSFULLY);
     }
+    @Override
+    public GenericResponse<List<Map<String, Object>>> getOrdersCountPerMonth(int months, EDeliveryStatus status) {
+        LocalDate startLocalDate = LocalDate.now()
+                .minusMonths(months - 1)
+                .withDayOfMonth(1);
+
+        Date startDate = Date.from(startLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        List<Object[]> results = orderRepository.findOrdersCountPerMonth(startDate, status);
+
+        return  GenericResponse.successResponse(results.stream()
+                .map(row -> Map.of(
+                        "month", row[0],
+                        "totalOrders", row[1]
+                ))
+                .toList(), DATA_FETCHED_SUCCESSFULLY);
+    }
 
     public Order getOrderByIdOrThrow(Long id) {
         return orderRepository.findById(id)

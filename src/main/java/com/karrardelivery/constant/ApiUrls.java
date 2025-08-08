@@ -23,4 +23,5 @@ public class ApiUrls {
     public final static String UNDER_DELIVERY = "/under-delivery/longer-than";
     public final static String ORDER_REPORT = "/order-report";
     public final static String UPLOAD_ORDERS = "/upload-orders";
+    public final static String COUNT_PER_MONTH = "/count-per-month";
 }

@@ -2,6 +2,7 @@ package com.karrardelivery.controller;
 
 import com.karrardelivery.constant.ApiUrls;
 import com.karrardelivery.dto.*;
+import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.service.OrderService;
 import com.karrardelivery.controller.spec.OrderSpec;
 import com.karrardelivery.service.impl.OrderImportService;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+
 import static com.karrardelivery.constant.ApiUrls.*;
 
 @RestController
@@ -94,4 +97,10 @@ public class OrderController {
         return ResponseEntity.ok("Orders imported successfully.");
     }
 
+    @GetMapping(COUNT_PER_MONTH)
+    public ResponseEntity<GenericResponse<List<Map<String, Object>>>> getOrdersCountPerMonth(
+            @RequestParam(defaultValue = "8") int months,
+            @RequestParam(required = false) EDeliveryStatus status) {
+        return ResponseEntity.ok(orderService.getOrdersCountPerMonth(months, status));
+    }
 }

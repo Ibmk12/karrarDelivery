@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -97,5 +98,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
     );
 
     Page<Order> findByDeliveryStatusAndOrderDateBefore(EDeliveryStatus deliveryStatus, Date date, Pageable pageable);
+
+    @Query("""
+    SELECT FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m') AS month, COUNT(o) 
+    FROM Order o
+    WHERE o.orderDate >= :startDate
+      AND (:status IS NULL OR o.deliveryStatus = :status)
+    GROUP BY FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m')
+    ORDER BY month DESC
+""")
+    List<Object[]> findOrdersCountPerMonth(@Param("startDate") Date startDate,
+                                           @Param("status") EDeliveryStatus status);
 
 }

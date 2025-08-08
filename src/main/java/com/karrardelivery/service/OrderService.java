@@ -3,6 +3,7 @@ package com.karrardelivery.service;
 import com.karrardelivery.dto.*;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.controller.spec.OrderSpec;
+import com.karrardelivery.entity.enums.EDeliveryStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
 
@@ -21,5 +23,5 @@ public interface OrderService {
     GenericResponse<String> updateOrderListStatus(UpdatedOrderStatusRequest request);
     GenericResponse<String> updateOrderStatus(OrderDto request);
     GenericResponse<List<OrderDto>> getOrdersUnderDeliveryLongerThan(Integer numberOfDays, Pageable pageable);
-
+    GenericResponse<List<Map<String, Object>>> getOrdersCountPerMonth(int months, EDeliveryStatus status);
 }
