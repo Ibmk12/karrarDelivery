@@ -37,7 +37,7 @@ public class OrderReportDataService {
         String traderName = extractTraderName();
 
         List<Order> orders = orderRepository.findCustomOrders(
-                traderName.trim(), deliveryRange[0], deliveryRange[1]);
+                traderName, deliveryRange[0], deliveryRange[1]);
 
         List<OrderReportDto> dtos = orderReportMapper.toDtoList(orders);
         setOrderDateIfNotEmpty(dtos, deliveryRange[0]);
@@ -50,7 +50,7 @@ public class OrderReportDataService {
         String traderName = extractTraderName();
 
         Page<Order> ordersPage = orderRepository.findCustomOrders(
-                traderName.trim(), deliveryRange[0], deliveryRange[1], pageable);
+                traderName, deliveryRange[0], deliveryRange[1], pageable);
 
         Page<OrderReportDto> dtoPage = orderReportMapper.mapToDtoPageable(ordersPage);
         List<OrderReportDto> dtoList = dtoPage.getContent();
