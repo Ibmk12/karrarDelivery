@@ -7,6 +7,7 @@ import com.karrardelivery.mapper.OrderMapper;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.MessageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -27,6 +28,7 @@ public class OrderImportService {
     private final TraderRepository traderRepository;
     private final MessageService messageService;
 
+    @Transactional
     public void importOrdersFromExcel(MultipartFile file) {
         List<Order> orders = new ArrayList<>();
 
@@ -97,8 +99,7 @@ public class OrderImportService {
             orderRepository.saveAll(orders);
             log.info("Imported {} orders from Excel", orders.size());
 
-        }
-        catch (DataIntegrityViolationException ex) {
+        } catch (DataIntegrityViolationException ex) {
             String rootMessage = Optional.ofNullable(ex.getRootCause())
                     .map(Throwable::getMessage)
                     .orElse("");
@@ -110,8 +111,7 @@ public class OrderImportService {
 
             log.error("Data integrity violation during import", ex);
             throw new RuntimeException("Data integrity violation: " + ex.getMessage(), ex);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error importing orders from Excel", e);
             throw new RuntimeException("Failed to import orders: " + e.getMessage(), e);
         }
