@@ -1,31 +1,27 @@
-# ==============================
-# Stage 1: Build the WAR using Maven
-# ==============================
-FROM maven:3.8.5-openjdk-11 AS builder
+# ---- Stage 1: Build ----
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 
-# Set working directory
+# Set workdir inside container
 WORKDIR /app
 
-# Copy pom and source code
+# Copy pom.xml and download dependencies first (for caching)
 COPY pom.xml .
 COPY src ./src
 
-# Build the WAR file (skip tests for faster build)
+# Package application (skip tests for faster builds)
 RUN mvn clean package -DskipTests
 
-# ==============================
-# Stage 2: Run the WAR on Tomcat
-# ==============================
-FROM tomcat:9.0-jdk11-openjdk-slim
+# ---- Stage 2: Run ----
+FROM eclipse-temurin:17-jdk-alpine
 
-# Remove default ROOT webapp
-RUN rm -rf /usr/local/tomcat/webapps/*
+# Set workdir
+WORKDIR /app
 
-# Copy WAR from builder stage
-COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+# Copy the built jar from the build stage
+COPY --from=build /app/target/Karrar-Delivery-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose Tomcat port
+# Expose application port (default Spring Boot is 8080)
 EXPOSE 8080
 
-# Start Tomcat
-CMD ["catalina.sh", "run"]
+# Run the jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
