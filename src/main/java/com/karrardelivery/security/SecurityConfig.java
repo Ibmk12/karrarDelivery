@@ -3,6 +3,7 @@ package com.karrardelivery.security;
 import com.karrardelivery.filter.JwtFilter;
 import com.karrardelivery.service.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,12 +14,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import static com.karrardelivery.constant.ApiUrls.AUTH;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource;
 
     private final JwtFilter jwtFilter;
     private final UserDetailsServiceImpl userDetailsService;
@@ -29,6 +34,7 @@ public class SecurityConfig {
                 authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)));
 
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(AUTH + "/**").permitAll()
                         .anyRequest().authenticated()
