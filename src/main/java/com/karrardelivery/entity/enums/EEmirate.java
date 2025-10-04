@@ -13,7 +13,8 @@ public enum EEmirate {
     AJMAN("Ajman", "عجمان"),
     UMM_AL_QUWAIN("Umm Al Quwain", "أم القيوين"),
     RAS_AL_KHAIMAH("Ras Al Khaimah", "رأس الخيمة"),
-    FUJAIRAH("Fujairah", "الفجيرة");
+    FUJAIRAH("Fujairah", "الفجيرة"),
+    AL_AIN("Al Ain", "العين");
 
     private final String english;
     private final String arabic;
