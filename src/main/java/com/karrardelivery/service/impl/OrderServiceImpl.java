@@ -208,17 +208,30 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public GenericResponse<List<OrderDto>> getOrdersUnderDeliveryLongerThan(Integer numberOfDays, Pageable pageable) {
+        log.info("getOrdersUnderDeliveryLongerThan() called with numberOfDays={} and pageable={}", numberOfDays, pageable);
+
         if (numberOfDays == null || numberOfDays <= 0) {
+            log.warn("Invalid numberOfDays ({}). Defaulting to 2 days.", numberOfDays);
             numberOfDays = 2;
         }
 
         LocalDate localThresholdDate = LocalDate.now().minusDays(numberOfDays);
         Date thresholdDate = Date.from(localThresholdDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
+        log.debug("Calculated thresholdDate={} ({} days ago)", thresholdDate, numberOfDays);
+
+        log.info("Fetching orders with status={} and orderDate before {}", EDeliveryStatus.UNDER_DELIVERY, thresholdDate);
         Page<Order> orders = orderRepository.findByDeliveryStatusAndOrderDateBefore(
                 EDeliveryStatus.UNDER_DELIVERY, thresholdDate, pageable);
 
+        log.info("Fetched {} orders from repository", orders.getTotalElements());
+
         Page<OrderDto> orderDtos = orderMapper.mapToDtoPageable(orders);
+        log.info("Mapped {} orders to DTOs", orderDtos.getContent().size());
+
+        log.info("Returning GenericResponse with pagination: totalPages={}, totalElements={}",
+                orderDtos.getTotalPages(), orderDtos.getTotalElements());
+
         return GenericResponse.successResponseWithPagination(
                 orderDtos.getContent(), orderDtos, DATA_FETCHED_SUCCESSFULLY);
     }
