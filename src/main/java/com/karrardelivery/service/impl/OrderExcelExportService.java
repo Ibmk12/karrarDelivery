@@ -123,6 +123,7 @@ public class OrderExcelExportService {
             String fileName = generateFileNameWithDateTime(traderName.trim().replace(" ", "_"), "xlsx");
 
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+            response.setHeader("Access-Control-Expose-Headers", "Content-Disposition"); // expose the header to JS
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             response.getOutputStream().write(fileBytes);
             response.getOutputStream().flush();
