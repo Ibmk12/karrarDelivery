@@ -42,7 +42,7 @@ public class OrderExcelExportService {
     public void getOrdersDailyReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
         try {
             List<OrderReportDto> dtos = orderReportDataService.fetchReportData(spec);
-
+            String traderName = request.getParameter("traderName");
             // Header translation
             String[] headerKeys = {
                     "report.header.no",
@@ -120,7 +120,7 @@ public class OrderExcelExportService {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             workbook.write(out);
             byte[] fileBytes = out.toByteArray();
-            String fileName = generateFileNameWithDateTime("orders-report", "xlsx");
+            String fileName = generateFileNameWithDateTime(traderName, "xlsx");
 
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
