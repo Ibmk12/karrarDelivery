@@ -120,7 +120,7 @@ public class OrderExcelExportService {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             workbook.write(out);
             byte[] fileBytes = out.toByteArray();
-            String fileName = generateFileNameWithDateTime(traderName, "xlsx");
+            String fileName = generateFileNameWithDateTime(traderName.trim().replace(" ", "_"), "xlsx");
 
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
@@ -134,7 +134,7 @@ public class OrderExcelExportService {
 
     private String generateFileNameWithDateTime(String baseName, String extension) {
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return baseName + "-" + now.format(formatter) + "." + extension;
     }
 
