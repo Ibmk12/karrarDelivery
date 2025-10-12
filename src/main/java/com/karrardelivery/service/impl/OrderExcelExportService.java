@@ -18,10 +18,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,11 +63,28 @@ public class OrderExcelExportService {
                     .map(messageService::getMessage)
                     .toArray(String[]::new);
 
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
             // Build sections
             List<Section<OrderReportDto>> sections = dtos.stream()
                     .collect(Collectors.groupingBy(OrderReportDto::getDeliveryStatus))
                     .entrySet()
                     .stream()
+                    .sorted(Map.Entry.comparingByKey(Comparator.comparingInt(status -> {
+                        // Process groups in this order: delivered -> under delivery -> cancelled -> exchanged
+                        switch (status.toLowerCase()) {
+                            case "delivered":
+                                return 1;
+                            case "under delivery":
+                                return 2;
+                            case "canceled":
+                                return 3;
+                            case "exchanged":
+                                return 4;
+                            default:
+                                return 999;
+                        }
+                    })))
                     .map(entry -> {
                         List<OrderReportDto> sectionData = entry.getValue();
 
@@ -72,7 +92,7 @@ public class OrderExcelExportService {
                             int index = sectionData.indexOf(dto) + 1;
                             return new Object[]{
                                     index,
-                                    dto.getOrderDate(),
+                                    dto.getOrderDate() != null ? sdf.format(dto.getOrderDate()) : "",
                                     dto.getInvoiceNo(),
                                     dto.getEmirate(),
                                     dto.getTotalAmount(),

@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
@@ -18,6 +19,8 @@ import static com.karrardelivery.constant.Constants.SIGNATURE;
 @Service
 @Data
 public class ExcelExportService {
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public static class Section<T> {
         public final String title;
@@ -119,7 +122,7 @@ public class ExcelExportService {
 
         // Date cell
         Cell dateCell = metaRow.createCell(dateStartCol - 1);
-        dateCell.setCellValue(((OrderReportDto)section.data.get(0)).getDeliveryDate());
+        dateCell.setCellValue(sdf.format(((OrderReportDto)section.data.get(0)).getDeliveryDate()));
         sheet.addMergedRegion(new CellRangeAddress(metaRow.getRowNum(), metaRow.getRowNum(), dateStartCol, dateEndCol));
         applyMergedStyle(metaRow, dateStartCol - 1, dateEndCol - 1, style);
 
