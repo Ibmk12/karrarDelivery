@@ -12,6 +12,6 @@
     <include file="db/changelog/sql/1.0.4-add-admin-user.sql"/>
     <include file="db/changelog/sql/1.0.5-added-blacklist-table.sql"/>
     <include file="db/changelog/sql/1.0.6-add-invoice-unique-constraint.sql"/>
-    <include file="db/changelog/sql/1.0.7-create-agent-table.sql"/>
-    <include file="db/changelog/sql/1.0.8-alter-order-table.sql"/>
+<!--    <include file="db/changelog/sql/1.0.7-create-agent-table.sql"/>-->
+<!--    <include file="db/changelog/sql/1.0.8-alter-order-table.sql"/>-->
 </databaseChangeLog>
