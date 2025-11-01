@@ -17,7 +17,7 @@ public interface AgentRepository extends JpaRepository<Agent, Long>, JpaSpecific
 
     boolean existsByNameAndDeleted(String name, boolean deleted);
 
-    boolean existsByCodeAndDeleted(String code, boolean deleted);
+//    boolean existsByCodeAndDeleted(String code, boolean deleted);
 
     boolean existsByEmailAndDeleted(String email, boolean deleted);
 
@@ -27,5 +27,5 @@ public interface AgentRepository extends JpaRepository<Agent, Long>, JpaSpecific
 
     boolean existsByNameAndDeletedAndIdNot(String name, boolean deleted, Long id);
 
-    boolean existsByCodeAndDeletedAndIdNot(String code, boolean deleted, Long id);
+//    boolean existsByCodeAndDeletedAndIdNot(String code, boolean deleted, Long id);
 }

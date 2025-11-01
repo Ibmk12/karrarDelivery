@@ -191,7 +191,7 @@ public class OrderExcelExportService {
                 Row row = sheet.createRow(rowIdx++);
                 row.createCell(0).setCellValue(dto.getId());
                 row.createCell(1).setCellValue(dto.getInvoiceNo());
-                row.createCell(2).setCellValue(dto.getDeliveryAgent());
+                row.createCell(2).setCellValue(dto.getAgentName() != null ? dto.getAgentName() : "");
                 row.createCell(3).setCellValue(dto.getOrderDate() != null ? dto.getOrderDate().toString() : "");
                 row.createCell(4).setCellValue(dto.getDeliveryDate() != null ? dto.getDeliveryDate().toString() : "");
                 row.createCell(5).setCellValue(dto.getAddress());

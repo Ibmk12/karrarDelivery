@@ -10,7 +10,6 @@ import java.util.Date;
 public class OrderDto {
     private Long id;
     private String invoiceNo;
-    private String deliveryAgent;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm a")
     private Date orderDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm a")
@@ -21,6 +20,8 @@ public class OrderDto {
     private String emirate;
     private Long traderId;
     private String traderName;
+    private Long agentId;
+    private String agentName;
     private String deliveryStatus;
     private Double totalAmount;
     private Double traderAmount;

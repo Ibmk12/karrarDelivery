@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 @Join(path = "trader", alias = "t")
 @And({
         @Spec(params = "deliveryStatus", path = "deliveryStatus", spec = Equal.class),
-        @Spec(params = "deliveryAgent", path = "deliveryAgent", spec = Equal.class),
         @Spec(params = "invoiceNo", path = "invoiceNo", spec = Equal.class),
         @Spec(params = "customerPhoneNo", path = "customerPhoneNo", spec = LikeIgnoreCase.class),
         @Spec(params = "address", path = "address", spec = LikeIgnoreCase.class),

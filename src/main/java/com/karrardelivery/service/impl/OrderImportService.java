@@ -1,9 +1,11 @@
 package com.karrardelivery.service.impl;
 
 import com.karrardelivery.dto.OrderDto;
+import com.karrardelivery.entity.Agent;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.mapper.OrderMapper;
+import com.karrardelivery.repository.AgentRepository;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.MessageService;
@@ -27,6 +29,7 @@ public class OrderImportService {
     private final OrderMapper orderMapper;
     private final TraderRepository traderRepository;
     private final MessageService messageService;
+    private final AgentRepository agentRepository;
 
     @Transactional
     public void importOrdersFromExcel(MultipartFile file) {
@@ -68,7 +71,6 @@ public class OrderImportService {
                 OrderDto dto = new OrderDto();
 
                 dto.setInvoiceNo(getSafeString(row, headerIndexMap, "invoice no"));
-                dto.setDeliveryAgent(getSafeString(row, headerIndexMap, "delivery agent"));
                 dto.setOrderDate(getDate(row, headerIndexMap, "order date"));
                 dto.setDeliveryDate(getDate(row, headerIndexMap, "delivery date"));
                 dto.setAddress(getSafeString(row, headerIndexMap, "address"));
@@ -90,8 +92,14 @@ public class OrderImportService {
                         .map(traderRepository::findByName)
                         .orElse(null);
 
+                String agentName = getSafeString(row, headerIndexMap, "delivery agent");
+                Agent agent = Optional.ofNullable(agentName)
+                        .map(agentRepository::findByName)
+                        .orElse(null);
+
                 Order order = orderMapper.toEntity(dto);
                 order.setTrader(trader);
+                order.setAgent(agent);
 
                 orders.add(order);
             }

@@ -39,8 +39,8 @@ public class AgentServiceImpl implements AgentService {
         if(agentRepository.existsByNameAndDeleted(agentDto.getName(), false))
             throw new DuplicateResourceException(messageService.getMessage("duplicate.agent.name.err.msg"), DUPLICATE_AGENT_NAME_ERR_CODE);
 
-        if(agentRepository.existsByCodeAndDeleted(agentDto.getCode(), false))
-            throw new DuplicateResourceException(messageService.getMessage("duplicate.agent.code.err.msg"), DUPLICATE_AGENT_CODE_ERR_CODE);
+//        if(agentRepository.existsByCodeAndDeleted(agentDto.getCode(), false))
+//            throw new DuplicateResourceException(messageService.getMessage("duplicate.agent.code.err.msg"), DUPLICATE_AGENT_CODE_ERR_CODE);
 
         if(agentRepository.existsByEmailAndDeleted(agentDto.getEmail(), false))
             throw new DuplicateResourceException(messageService.getMessage("duplicate.agent.email.err.msg"), DUPLICATE_AGENT_EMAIL_ERR_CODE);
@@ -76,9 +76,9 @@ public class AgentServiceImpl implements AgentService {
             throw new DuplicateResourceException(messageService.getMessage("duplicate.agent.email.err.msg"), DUPLICATE_AGENT_EMAIL_ERR_CODE);
         }
 
-        if(agentRepository.existsByCodeAndDeletedAndIdNot(agentDto.getCode(), false, id)) {
-            throw new DuplicateResourceException(messageService.getMessage("duplicate.agent.code.err.msg"), DUPLICATE_AGENT_CODE_ERR_CODE);
-        }
+//        if(agentRepository.existsByCodeAndDeletedAndIdNot(agentDto.getCode(), false, id)) {
+//            throw new DuplicateResourceException(messageService.getMessage("duplicate.agent.code.err.msg"), DUPLICATE_AGENT_CODE_ERR_CODE);
+//        }
 
         if(agentRepository.existsByNameAndDeletedAndIdNot(agentDto.getName(), false, id)) {
             throw new DuplicateResourceException(messageService.getMessage("duplicate.agent.name.err.msg"), DUPLICATE_AGENT_NAME_ERR_CODE);

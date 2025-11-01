@@ -3,6 +3,7 @@ package com.karrardelivery.service.impl;
 import com.karrardelivery.common.utility.BeanUtilsHelper;
 import com.karrardelivery.constant.Messages;
 import com.karrardelivery.dto.*;
+import com.karrardelivery.entity.Agent;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.entity.enums.EDeliveryStatus;
@@ -10,6 +11,7 @@ import com.karrardelivery.exception.DuplicateResourceException;
 import com.karrardelivery.exception.ResourceNotFoundException;
 import com.karrardelivery.mapper.OrderMapper;
 import com.karrardelivery.mapper.OrderReportMapper;
+import com.karrardelivery.repository.AgentRepository;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.MessageService;
@@ -37,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final TraderRepository traderRepository;
     private final OrderMapper orderMapper;
+    private final AgentRepository agentRepository;
     private final MessageService messageService;
     private final OrderReportMapper orderReportMapper;
 
@@ -46,7 +49,9 @@ public class OrderServiceImpl implements OrderService {
         applyDefaultValues(orderDto);
 
         Trader trader = getActiveTraderByIdOrThrow(orderDto.getTraderId());
-        Order order = prepareOrder(orderDto, trader);
+        Agent agent = getActiveAgentByIdOrThrow(orderDto.getAgentId());
+
+        Order order = prepareOrder(orderDto, trader, agent);
 
         calculateOrderAmounts(order);
         order.setCustomerPhoneNo(BeanUtilsHelper.internationalPhoneFormat(orderDto.getCustomerPhoneNo()));
@@ -269,6 +274,14 @@ public class OrderServiceImpl implements OrderService {
                 ));
     }
 
+    public Agent getActiveAgentByIdOrThrow(Long agentId) {
+        return agentRepository.findByIdAndDeleted(agentId, false)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("agent.not.found.err.msg"),
+                        AGENT_NOT_FOUND_ERR_CODE
+                ));
+    }
+
     private OrderReportDtoList populateOrderReportTotals(List<OrderReportDto> orderList) {
         OrderReportDtoList result = new OrderReportDtoList();
         double grandTotal = 0;
@@ -320,9 +333,10 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private Order prepareOrder(OrderDto orderDto, Trader trader) {
+    private Order prepareOrder(OrderDto orderDto, Trader trader, Agent agent) {
         Order order = orderMapper.toEntity(orderDto);
         order.setTrader(trader);
+        order.setAgent(agent);
         return order;
     }
 

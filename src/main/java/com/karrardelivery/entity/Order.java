@@ -42,8 +42,6 @@ public class Order {
     @Column(name = "emirate", nullable = false)
     private EEmirate emirate;
 
-
-    private String deliveryAgent;
     @Column(name = "delivery_date")
     private Date deliveryDate;
     private String address;

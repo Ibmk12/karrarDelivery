@@ -16,6 +16,8 @@ public interface OrderMapper extends IBaseMapper<Order, OrderDto> {
             @Mapping(target = "deliveryStatus", source = "deliveryStatus", qualifiedByName = "deliveryStatusToString"),
             @Mapping(target = "traderId", source = "trader.id"),
             @Mapping(target = "traderName", source = "trader.name"),
+            @Mapping(target = "agentId", source = "agent.id"),
+            @Mapping(target = "agentName", source = "agent.name"),
             @Mapping(target = "id", source = "id")
     })
     @Override
@@ -24,6 +26,7 @@ public interface OrderMapper extends IBaseMapper<Order, OrderDto> {
     @InheritInverseConfiguration
     @Mappings({
             @Mapping(target = "trader", ignore = true),
+            @Mapping(target = "agent", ignore = true),
             @Mapping(target = "lastUpdated", ignore = true),
             @Mapping(target = "emirate", source = "emirate", qualifiedByName = "stringToEmirate"),
             @Mapping(target = "deliveryStatus", source = "deliveryStatus", qualifiedByName = "stringToDeliveryStatus")
@@ -37,6 +40,7 @@ public interface OrderMapper extends IBaseMapper<Order, OrderDto> {
             @Mapping(target = "emirate", source = "emirate", qualifiedByName = "stringToEmirate"),
             @Mapping(target = "deliveryStatus", source = "deliveryStatus", qualifiedByName = "stringToDeliveryStatus"),
             @Mapping(target = "trader", ignore = true),
+            @Mapping(target = "agent", ignore = true),
             @Mapping(target = "lastUpdated", ignore = true)
     })
     void mapToUpdate(@MappingTarget Order entity, OrderDto dto);
