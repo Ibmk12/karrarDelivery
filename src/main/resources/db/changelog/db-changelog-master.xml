@@ -15,4 +15,5 @@
     <include file="db/changelog/sql/1.0.7-create-agent-table.sql"/>
     <include file="db/changelog/sql/1.0.8-alter-order-table.sql"/>
     <include file="db/changelog/sql/1.0.9-alter-agen-table.sql"/>
+    <include file="db/changelog/sql/1.1.0-alter-trader-table.sql"/>
 </databaseChangeLog>
