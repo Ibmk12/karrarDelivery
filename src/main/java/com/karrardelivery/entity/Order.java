@@ -33,6 +33,11 @@ public class Order {
     @JsonIgnore
     private Trader trader;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agent_id")
+    @JsonIgnore
+    private Agent agent;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "emirate", nullable = false)
     private EEmirate emirate;

@@ -15,4 +15,9 @@ public class ErrorCodes {
     public static final Integer INVALID_JWT_TOKEN_ERR_CODE = 1002;
     public static final Integer FAILED_AUTH_ERR_CODE = 1003;
     public static final Integer DISABLED_USER_ERR_CODE = 1004;
+    public static final String DUPLICATE_AGENT_PHONE_NUMBER_ERR_CODE = "4001";
+    public static final String DUPLICATE_AGENT_EMAIL_ERR_CODE = "4002";
+    public static final String DUPLICATE_AGENT_NAME_ERR_CODE = "4008";
+    public static final String DUPLICATE_AGENT_CODE_ERR_CODE = "4009";
+    public static final String AGENT_NOT_FOUND_ERR_CODE = "4004";
 }
