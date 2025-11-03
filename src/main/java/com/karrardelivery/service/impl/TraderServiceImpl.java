@@ -50,9 +50,15 @@ public class TraderServiceImpl implements TraderService {
     }
 
     @Override
-    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec, Pageable pageable) {
-        Page<TraderDto> result = traderMapper.mapToDtoPageable(traderRepository.findAll(spec, pageable));
-        return GenericResponse.successResponseWithPagination(result.getContent(), result, DATA_FETCHED_SUCCESSFULLY);
+    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec, Pageable pageable, Integer page, Integer size) {
+
+        if(page != null || size != null) {
+            Page<TraderDto> result = traderMapper.mapToDtoPageable(traderRepository.findAll(spec, pageable));
+            return GenericResponse.successResponseWithPagination(result.getContent(), result, DATA_FETCHED_SUCCESSFULLY);
+        }
+
+        List<TraderDto> result = traderMapper.toDtoList(traderRepository.findAll(spec));
+        return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
     }
 
     @Override

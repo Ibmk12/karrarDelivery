@@ -12,7 +12,7 @@ import java.util.List;
 public interface TraderService {
 
     GenericResponse<String> createTrader(TraderDto traderDto);
-    GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec, Pageable pageable);
+    GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec, Pageable pageable, Integer page, Integer size);
     GenericResponse<TraderDto>  getTraderById(Long id);
     GenericResponse<String> updateTrader(Long id, TraderDto traderDto);
     GenericResponse<String> deleteTrader(Long id);

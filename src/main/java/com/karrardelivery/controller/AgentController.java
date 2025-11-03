@@ -31,8 +31,12 @@ public class AgentController {
     }
 
     @GetMapping
-    public GenericResponse<List<AgentDto>> getAllAgents(AgentSpec spec, @PageableDefault(size = 10) Pageable pageable) {
-        return agentService.getAllAgents(spec, pageable);
+    public GenericResponse<List<AgentDto>> getAllAgents(
+            AgentSpec spec, @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        return agentService.getAllAgents(spec, pageable, page, size);
     }
 
     @GetMapping("/{id}")

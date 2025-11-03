@@ -8,6 +8,7 @@ import com.karrardelivery.entity.Trader;
 import com.karrardelivery.service.TraderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping(ApiUrls.TRADER)
 @RequiredArgsConstructor
+@Slf4j
 public class TraderController {
 
     private final TraderService traderService;
@@ -33,8 +35,12 @@ public class TraderController {
     }
 
     @GetMapping
-    public GenericResponse<List<TraderDto>> getAllTraders(TraderSpec spec, @PageableDefault(size = 10) Pageable pageable) {
-        return traderService.getAllTraders(spec, pageable);
+    public GenericResponse<List<TraderDto>> getAllTraders(
+            TraderSpec spec, @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size)
+    {
+        return traderService.getAllTraders(spec, pageable, page, size);
     }
 
     @GetMapping("/{id}")

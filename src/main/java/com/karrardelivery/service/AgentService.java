@@ -10,7 +10,7 @@ import java.util.List;
 public interface AgentService {
 
     GenericResponse<String> createAgent(AgentDto AgentDto);
-    GenericResponse<List<AgentDto>> getAllAgents(AgentSpec spec, Pageable pageable);
+    GenericResponse<List<AgentDto>> getAllAgents(AgentSpec spec, Pageable pageable, Integer page, Integer size);
     GenericResponse<AgentDto>  getAgentById(Long id);
     GenericResponse<String> updateAgent(Long id, AgentDto AgentDto);
     GenericResponse<String> deleteAgent(Long id);

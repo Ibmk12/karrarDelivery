@@ -4,6 +4,7 @@ import com.karrardelivery.constant.Messages;
 import com.karrardelivery.controller.spec.AgentSpec;
 import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.dto.AgentDto;
+import com.karrardelivery.dto.TraderDto;
 import com.karrardelivery.entity.Agent;
 import com.karrardelivery.exception.DuplicateResourceException;
 import com.karrardelivery.exception.ResourceNotFoundException;
@@ -53,9 +54,15 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    public GenericResponse<List<AgentDto>> getAllAgents(AgentSpec spec, Pageable pageable) {
-        Page<AgentDto> result = agentMapper.mapToDtoPageable(agentRepository.findAll(spec, pageable));
-        return GenericResponse.successResponseWithPagination(result.getContent(), result, DATA_FETCHED_SUCCESSFULLY);
+    public GenericResponse<List<AgentDto>> getAllAgents(AgentSpec spec, Pageable pageable, Integer page, Integer size) {
+
+        if(page != null || size != null) {
+            Page<AgentDto> result = agentMapper.mapToDtoPageable(agentRepository.findAll(spec, pageable));
+            return GenericResponse.successResponseWithPagination(result.getContent(), result, DATA_FETCHED_SUCCESSFULLY);
+        }
+
+        List<AgentDto> result = agentMapper.toDtoList(agentRepository.findAll(spec));
+        return GenericResponse.successResponse(result, DATA_FETCHED_SUCCESSFULLY);
     }
 
     @Override
