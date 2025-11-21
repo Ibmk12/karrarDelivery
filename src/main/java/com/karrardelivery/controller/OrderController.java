@@ -43,7 +43,7 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<GenericResponse<List<OrderDto>>> getAllOrders(
             OrderSpec spec,
-            @PageableDefault(sort = "orderDate", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+            @PageableDefault(sort = {"orderDate", "id"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
         return ResponseEntity.ok(orderService.getAllOrders(spec, pageable));
     }
 
