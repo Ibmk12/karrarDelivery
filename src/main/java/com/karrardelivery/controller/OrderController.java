@@ -7,6 +7,7 @@ import com.karrardelivery.service.OrderService;
 import com.karrardelivery.controller.spec.OrderSpec;
 import com.karrardelivery.service.impl.OrderImportService;
 import com.karrardelivery.service.impl.OrderReportDataService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -43,8 +44,9 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<GenericResponse<List<OrderDto>>> getAllOrders(
             OrderSpec spec,
-            @PageableDefault(sort = {"orderDate", "id"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
-        return ResponseEntity.ok(orderService.getAllOrders(spec, pageable));
+            @PageableDefault(sort = {"orderDate", "id"}, direction = Sort.Direction.DESC, size = 10) Pageable pageable,
+            HttpServletRequest request) {
+        return ResponseEntity.ok(orderService.getAllOrders(spec, pageable, request));
     }
 
     @GetMapping("/{id}")

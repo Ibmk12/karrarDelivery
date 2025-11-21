@@ -12,6 +12,13 @@ import net.kaczmarzyk.spring.data.jpa.web.annotation.OnTypeMismatch;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static com.karrardelivery.common.utility.BeanUtilsHelper.toEndOfDay;
+import static com.karrardelivery.common.utility.BeanUtilsHelper.toStartOfDay;
+
 @Join(path = "trader", alias = "t")
 @And({
         @Spec(params = "deliveryStatus", path = "deliveryStatus", spec = Equal.class),
@@ -21,10 +28,10 @@ import org.springframework.data.jpa.domain.Specification;
         @Spec(params = "traderName", path = "t.name", spec = LikeIgnoreCase.class),
         @Spec(params = "traderPhoneNumber", path = "t.phoneNumber", spec = LikeIgnoreCase.class),
         @Spec(params = "email", path = "t.email", spec = LikeIgnoreCase.class),
-        @Spec(params = "fromOrderDate", path = "orderDate", spec = GreaterThanOrEqual.class,
-                onTypeMismatch = OnTypeMismatch.EXCEPTION),
-        @Spec(params = "toOrderDate", path = "orderDate", spec = LessThanOrEqual.class,
-                onTypeMismatch = OnTypeMismatch.EXCEPTION),
+//        @Spec(params = "fromOrderDate", path = "orderDate", spec = GreaterThanOrEqual.class,
+//                onTypeMismatch = OnTypeMismatch.EXCEPTION),
+//        @Spec(params = "toOrderDate", path = "orderDate", spec = LessThanOrEqual.class,
+//                onTypeMismatch = OnTypeMismatch.EXCEPTION),
         @Spec(params = "fromDeliveryDate", path = "deliveryDate", spec = GreaterThanOrEqual.class,
                 onTypeMismatch = OnTypeMismatch.EXCEPTION),
         @Spec(params = "toDeliveryDate", path = "deliveryDate", spec = LessThanOrEqual.class,
@@ -62,5 +69,35 @@ public interface OrderSpec extends Specification<Order> {
                 cb.equal(root.get("deliveryStatus"), EDeliveryStatus.CANCELED),
                 cb.equal(root.get("deliveryStatus"), EDeliveryStatus.UNDER_DELIVERY)
         );
+    }
+
+    static Specification<Order> fromDate(String field, String dateStr) {
+        return (root, query, cb) -> {
+            if (dateStr == null || dateStr.isEmpty()) return cb.conjunction();
+
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // adjust format if needed
+                Date date = sdf.parse(dateStr);
+                Date start = toStartOfDay(date);
+                return cb.greaterThanOrEqualTo(root.get(field), start);
+            } catch (ParseException e) {
+                throw new IllegalArgumentException("Invalid date format for fromDate: " + dateStr, e);
+            }
+        };
+    }
+
+    static Specification<Order> toDate(String field, String dateStr) {
+        return (root, query, cb) -> {
+            if (dateStr == null || dateStr.isEmpty()) return cb.conjunction();
+
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // adjust format if needed
+                Date date = sdf.parse(dateStr);
+                Date end = toEndOfDay(date);
+                return cb.lessThanOrEqualTo(root.get(field), end);
+            } catch (ParseException e) {
+                throw new IllegalArgumentException("Invalid date format for toDate: " + dateStr, e);
+            }
+        };
     }
 }
