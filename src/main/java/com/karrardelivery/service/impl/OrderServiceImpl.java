@@ -105,6 +105,11 @@ public class OrderServiceImpl implements OrderService {
         Double deliveryAmount = order.getDeliveryAmount() != null ? order.getDeliveryAmount() : 0.0;
         Double agentAmount = order.getAgentAmount() != null ? order.getAgentAmount() : 0.0;
 
+        if (traderAmount == 0){
+            traderAmount = - deliveryAmount;
+            order.setTraderAmount(traderAmount);
+        }
+
         order.setTotalAmount(traderAmount + deliveryAmount);
         order.setNetCompanyAmount(deliveryAmount - agentAmount);
     }
