@@ -40,7 +40,7 @@ public class OrderReportDataService {
                 traderName, deliveryRange[0], deliveryRange[1]);
 
         List<OrderReportDto> dtos = orderReportMapper.toDtoList(orders);
-        setOrderDateIfNotEmpty(dtos, deliveryRange[0]);
+//        setOrderDateIfNotEmpty(dtos, deliveryRange[0]);
 
         return dtos;
     }
@@ -54,7 +54,7 @@ public class OrderReportDataService {
 
         Page<OrderReportDto> dtoPage = orderReportMapper.mapToDtoPageable(ordersPage);
         List<OrderReportDto> dtoList = dtoPage.getContent();
-        setOrderDateIfNotEmpty(dtoList, deliveryRange[0]);
+//        setOrderDateIfNotEmpty(dtoList, deliveryRange[0]);
 
         return GenericResponse.successResponseWithPagination(dtoList, dtoPage, DATA_FETCHED_SUCCESSFULLY);
     }
