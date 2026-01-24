@@ -100,6 +100,18 @@ public class BeanUtilsHelper {
         return new LocalDateTime[]{startOfDay, endOfDay};
     }
 
+    public static LocalDateTime getUnderDeliveryDate(HttpServletRequest request) {
+        String deliveryDateParam = request.getParameter("toDeliveryDate");
+        if(deliveryDateParam == null)
+            return null;
+
+        LocalDate baseDate = LocalDate.parse(deliveryDateParam.trim());
+
+        LocalDateTime endOfDay = baseDate.plusDays(1).atStartOfDay().minusNanos(1);
+
+        return endOfDay;
+    }
+
     public static String internationalPhoneFormat(String phone) {
         if (phone == null || phone.isBlank()) {
             return phone;

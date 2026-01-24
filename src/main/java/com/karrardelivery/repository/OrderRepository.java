@@ -30,6 +30,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
     JOIN trader t ON o.trader_id = t.id
     WHERE o.delivery_status = 'UNDER_DELIVERY'
       AND t.name = :traderName
+      AND ( :underDeliveryUntil IS NULL
+            OR o.order_date <= :underDeliveryUntil )
 
     UNION ALL
 
@@ -45,53 +47,59 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
     )
     List<Order> findCustomOrders(
             @Param("traderName") String traderName,
+            @Param("underDeliveryUntil") LocalDateTime underDeliveryUntil, // nullable
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay
     );
 
     @Query(
             value = """
-        SELECT * FROM (
-            SELECT o.*, o.order_date AS orderDateAlias
-            FROM orders o
-            JOIN trader t ON o.trader_id = t.id
-            WHERE o.delivery_status = 'UNDER_DELIVERY'
-              AND t.name = :traderName
+    SELECT * FROM (
+        SELECT o.*, o.order_date AS orderDateAlias
+        FROM orders o
+        JOIN trader t ON o.trader_id = t.id
+        WHERE o.delivery_status = 'UNDER_DELIVERY'
+          AND t.name = :traderName
+          AND ( :underDeliveryUntil IS NULL 
+                OR o.order_date <= :underDeliveryUntil )
 
-            UNION ALL
+        UNION ALL
 
-            SELECT o.*, o.order_date AS orderDateAlias
-            FROM orders o
-            JOIN trader t ON o.trader_id = t.id
-            WHERE o.delivery_status != 'UNDER_DELIVERY'
-              AND t.name = :traderName
-              AND o.delivery_date >= :startOfDay
-              AND o.delivery_date <= :endOfDay
-        ) AS combined_orders
-        """,
+        SELECT o.*, o.order_date AS orderDateAlias
+        FROM orders o
+        JOIN trader t ON o.trader_id = t.id
+        WHERE o.delivery_status != 'UNDER_DELIVERY'
+          AND t.name = :traderName
+          AND o.delivery_date >= :startOfDay
+          AND o.delivery_date <= :endOfDay
+    ) AS combined_orders
+    """,
             countQuery = """
-        SELECT COUNT(*) FROM (
-            SELECT o.id
-            FROM orders o
-            JOIN trader t ON o.trader_id = t.id
-            WHERE o.delivery_status = 'UNDER_DELIVERY'
-              AND t.name = :traderName
+    SELECT COUNT(*) FROM (
+        SELECT o.id
+        FROM orders o
+        JOIN trader t ON o.trader_id = t.id
+        WHERE o.delivery_status = 'UNDER_DELIVERY'
+          AND t.name = :traderName
+          AND ( :underDeliveryUntil IS NULL 
+                OR o.order_date <= :underDeliveryUntil )
 
-            UNION ALL
+        UNION ALL
 
-            SELECT o.id
-            FROM orders o
-            JOIN trader t ON o.trader_id = t.id
-            WHERE o.delivery_status != 'UNDER_DELIVERY'
-              AND t.name = :traderName
-              AND o.delivery_date >= :startOfDay
-              AND o.delivery_date <= :endOfDay
-        ) AS count_query
-        """,
+        SELECT o.id
+        FROM orders o
+        JOIN trader t ON o.trader_id = t.id
+        WHERE o.delivery_status != 'UNDER_DELIVERY'
+          AND t.name = :traderName
+          AND o.delivery_date >= :startOfDay
+          AND o.delivery_date <= :endOfDay
+    ) AS count_query
+    """,
             nativeQuery = true
     )
     Page<Order> findCustomOrders(
             @Param("traderName") String traderName,
+            @Param("underDeliveryUntil") LocalDateTime underDeliveryUntil,
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay,
             Pageable pageable

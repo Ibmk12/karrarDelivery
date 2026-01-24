@@ -37,7 +37,7 @@ public class OrderReportDataService {
         String traderName = extractTraderName();
 
         List<Order> orders = orderRepository.findCustomOrders(
-                traderName, deliveryRange[0], deliveryRange[1]);
+                traderName, extractUnderDeliveryDate(), deliveryRange[0], deliveryRange[1]);
 
         List<OrderReportDto> dtos = orderReportMapper.toDtoList(orders);
 //        setOrderDateIfNotEmpty(dtos, deliveryRange[0]);
@@ -50,7 +50,7 @@ public class OrderReportDataService {
         String traderName = extractTraderName();
 
         Page<Order> ordersPage = orderRepository.findCustomOrders(
-                traderName, deliveryRange[0], deliveryRange[1], pageable);
+                traderName, extractUnderDeliveryDate(), deliveryRange[0], deliveryRange[1], pageable);
 
         Page<OrderReportDto> dtoPage = orderReportMapper.mapToDtoPageable(ordersPage);
         List<OrderReportDto> dtoList = dtoPage.getContent();
@@ -81,5 +81,9 @@ public class OrderReportDataService {
         Specification<Order> specification = Specification.where(spec);
         List<Order> orderList = orderRepository.findAll(specification);
         return orderMapper.toDtoList(orderList);
+    }
+
+    private LocalDateTime extractUnderDeliveryDate() {
+        return BeanUtilsHelper.getUnderDeliveryDate(request);
     }
 }
