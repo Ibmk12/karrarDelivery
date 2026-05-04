@@ -1,9 +1,11 @@
 package com.karrardelivery.service.impl;
 
+import com.karrardelivery.common.utility.BeanUtilsHelper;
 import com.karrardelivery.dto.OrderDto;
 import com.karrardelivery.dto.OrderReportDto;
 import com.karrardelivery.controller.spec.OrderSpec;
 import com.karrardelivery.service.MessageService;
+import com.karrardelivery.service.TraderFinancialReportService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +21,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,6 +40,7 @@ public class OrderExcelExportService {
     private final OrderReportDataService orderReportDataService;
     private final ExcelExportService excelExportService;
     private final ExcelFormattingService excelFormattingService;
+    private final TraderFinancialReportService traderFinancialReportService;
     private final MessageService messageService;
 
     public void getOrdersDailyReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
@@ -225,4 +226,47 @@ public class OrderExcelExportService {
         }
     }
 
+    public void getTraderFinancialReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            String fromDateStr = request.getParameter("fromDeliveredDate");
+            String toDateStr = request.getParameter("toDeliveredDate");
+            Date fromDate = BeanUtilsHelper.toStartOfDay(fromDateStr);
+
+            List<OrderDto> dtos = orderReportDataService.fetchTradersFinancialOrderData(spec, fromDateStr, toDateStr);
+
+            Map<String, List<OrderDto>> grouped = dtos.stream()
+                    .collect(Collectors.groupingBy(
+                            o -> o.getTraderName() != null ? o.getTraderName() : "",
+                            LinkedHashMap::new,
+                            Collectors.toList()));
+
+            // Header translation
+            String[] headerKeys = {
+                    "trader.financial.report.traderName",
+                    "trader.financial.report.deliveredOrders",
+                    "trader.financial.report.traderAmount",
+                    "trader.financial.report.deliveryAmount",
+                    "trader.financial.report.agentAmount",
+                    "trader.financial.report.netCompanyAmount",
+                    "trader.financial.report.total",
+                    "trader.financial.report.reportName"
+            };
+
+            String[] headers = Stream.of(headerKeys)
+                    .map(messageService::getMessage)
+                    .toArray(String[]::new);
+
+            byte[] fileBytes = traderFinancialReportService.generateTraderFinancialExcelReport(grouped, fromDate, headers);
+
+            String fileName = "Traders_Fin_Report_" + fromDateStr + ".xlsx";
+
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+            response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            response.getOutputStream().write(fileBytes);
+            response.getOutputStream().flush();
+        } catch (Exception e) {
+            log.error("Failed to export orders to Excel: {}", e.getMessage(), e);
+        }
+    }
 }

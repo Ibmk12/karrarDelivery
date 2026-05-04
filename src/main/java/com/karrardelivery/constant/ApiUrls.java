@@ -25,4 +25,5 @@ public class ApiUrls {
     public final static String ORDER_REPORT = "/order-report";
     public final static String UPLOAD_ORDERS = "/upload-orders";
     public final static String COUNT_PER_MONTH = "/count-per-month";
+    public final static String TRADER_FINANCIAL_REPORT = "/trader-financial-report";
 }

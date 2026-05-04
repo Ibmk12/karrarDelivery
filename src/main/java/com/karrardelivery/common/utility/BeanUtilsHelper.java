@@ -150,5 +150,15 @@ public class BeanUtilsHelper {
         return c.getTime();
     }
 
-
+    public static Date toStartOfDay(String dateString) {
+        LocalDate localDate = LocalDate.parse(dateString);
+        Date reportDate = java.sql.Date.valueOf(localDate);
+        Calendar c = Calendar.getInstance();
+        c.setTime(reportDate);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
+    }
 }

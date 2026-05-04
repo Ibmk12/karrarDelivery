@@ -36,4 +36,12 @@ public class ExportController {
         }
     }
 
+    @GetMapping(TRADER_FINANCIAL_REPORT)
+    public void getTraderFinancialReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            orderExcelExportService.getTraderFinancialReport(spec, response,request);
+        } catch (Exception e) {
+            log.error("Error exporting order report", e);
+        }
+    }
 }

@@ -83,6 +83,14 @@ public class OrderReportDataService {
         return orderMapper.toDtoList(orderList);
     }
 
+    public List<OrderDto> fetchTradersFinancialOrderData(OrderSpec spec, String fromDeleiveryDateString, String toDeleiveryDateString) {
+        Specification<Order> specification = Specification.where(spec)
+                .and(OrderSpec.fromDate("deliveryDate", fromDeleiveryDateString))
+                .and(OrderSpec.toDate("deliveryDate", toDeleiveryDateString));
+        List<Order> orderList = orderRepository.findAll(specification);
+        return orderMapper.toDtoList(orderList);
+    }
+
     private LocalDateTime extractUnderDeliveryDate() {
         return BeanUtilsHelper.getUnderDeliveryDate(request);
     }
