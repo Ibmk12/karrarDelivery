@@ -140,7 +140,7 @@ public class TraderFinancialReportServiceImpl implements TraderFinancialReportSe
         cell(row, COL_DELIVERY_FEE,  deliveryFee,             s.grandTotalCurrency);
         cell(row, COL_AGENT_FEE,     agentFee,                s.grandTotalCurrency);
         cell(row, COL_NET_COMPANY,   netCompany,              s.grandTotalCurrency);
-        cell(row, COL_TOTAL,         traderAmount + deliveryFee + agentFee + netCompany, s.grandTotalCurrency);
+        cell(row, COL_TOTAL,         traderAmount + deliveryFee , s.grandTotalCurrency);
     }
 
     // ── cell helpers ──────────────────────────────────────────────────────────
