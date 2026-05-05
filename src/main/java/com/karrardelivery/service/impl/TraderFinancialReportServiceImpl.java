@@ -108,7 +108,7 @@ public class TraderFinancialReportServiceImpl implements TraderFinancialReportSe
         double deliveryFee  = group.stream().mapToDouble(OrderDto::getDeliveryAmount).sum();
         double agentFee     = group.stream().mapToDouble(o -> o.getAgentAmount()      != null ? o.getAgentAmount()      : 0.0).sum();
         double netCompany   = group.stream().mapToDouble(o -> o.getNetCompanyAmount() != null ? o.getNetCompanyAmount() : 0.0).sum();
-        double total        = traderAmount + deliveryFee + agentFee + netCompany;
+        double total        = traderAmount + deliveryFee;
 
         cell(row, COL_TRADER_NAME,   traderName,       s.dataText);
         cell(row, COL_TOTAL_ORDERS,  (double) group.size(), s.dataNumber);
