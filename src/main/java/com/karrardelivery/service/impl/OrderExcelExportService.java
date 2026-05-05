@@ -229,7 +229,7 @@ public class OrderExcelExportService {
     public void getTraderFinancialReport(OrderSpec spec, HttpServletResponse response, HttpServletRequest request) {
         try {
             String fromDateStr = request.getParameter("fromDeliveredDate");
-            String toDateStr = request.getParameter("toDeliveredDate");
+            String toDateStr = request.getParameter("toDeliveredDate") != null ? request.getParameter("toDeliveredDate") : fromDateStr;
             Date fromDate = BeanUtilsHelper.toStartOfDay(fromDateStr);
 
             List<OrderDto> dtos = orderReportDataService.fetchTradersFinancialOrderData(spec, fromDateStr, toDateStr);
