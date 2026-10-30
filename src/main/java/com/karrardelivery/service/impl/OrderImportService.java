@@ -9,6 +9,8 @@ import com.karrardelivery.repository.AgentRepository;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.MessageService;
+import com.karrardelivery.service.OrderHistoryService;
+import com.karrardelivery.entity.enums.EOrderHistoryAction;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,7 @@ public class OrderImportService {
     private final TraderRepository traderRepository;
     private final MessageService messageService;
     private final AgentRepository agentRepository;
+    private final OrderHistoryService orderHistoryService;
 
     @Transactional
     public void importOrdersFromExcel(MultipartFile file) {
@@ -105,6 +108,7 @@ public class OrderImportService {
             }
 
             orderRepository.saveAll(orders);
+            orderHistoryService.recordAll(orders, EOrderHistoryAction.UPLOADED);
             log.info("Imported {} orders from Excel", orders.size());
 
         } catch (DataIntegrityViolationException ex) {

@@ -7,6 +7,7 @@ import com.karrardelivery.entity.Agent;
 import com.karrardelivery.entity.Order;
 import com.karrardelivery.entity.Trader;
 import com.karrardelivery.entity.enums.EDeliveryStatus;
+import com.karrardelivery.entity.enums.EOrderHistoryAction;
 import com.karrardelivery.exception.DuplicateResourceException;
 import com.karrardelivery.exception.ResourceNotFoundException;
 import com.karrardelivery.mapper.OrderMapper;
@@ -15,6 +16,7 @@ import com.karrardelivery.repository.AgentRepository;
 import com.karrardelivery.repository.OrderRepository;
 import com.karrardelivery.repository.TraderRepository;
 import com.karrardelivery.service.MessageService;
+import com.karrardelivery.service.OrderHistoryService;
 import com.karrardelivery.service.OrderService;
 import com.karrardelivery.controller.spec.OrderSpec;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
     private final AgentRepository agentRepository;
     private final MessageService messageService;
     private final OrderReportMapper orderReportMapper;
+    private final OrderHistoryService orderHistoryService;
 
     @Override
     public GenericResponse<String> createOrder(OrderDto orderDto) {
@@ -57,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
         calculateOrderAmounts(order);
         order.setCustomerPhoneNo(BeanUtilsHelper.internationalPhoneFormat(orderDto.getCustomerPhoneNo()));
         orderRepository.save(order);
+        orderHistoryService.record(order, EOrderHistoryAction.CREATED, null, null, null);
 
         return GenericResponse.successResponseWithoutData(Messages.ORDER_CREATED_SUCCESSFULLY);
     }
@@ -87,15 +91,27 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public GenericResponse<String> updateOrderMetadata(Long id, OrderDto orderDto) {
         Order order = getOrderByIdOrThrow(id);
+        Map<String, String> before = orderHistoryService.snapshot(order);
         orderMapper.mapToUpdate(order, orderDto);
+        // the mapper ignores trader/agent, so apply a changed trader or agent here
+        if (orderDto.getAgentId() != null
+                && (order.getAgent() == null || !orderDto.getAgentId().equals(order.getAgent().getId()))) {
+            order.setAgent(getActiveAgentByIdOrThrow(orderDto.getAgentId()));
+        }
+        if (orderDto.getTraderId() != null
+                && (order.getTrader() == null || !orderDto.getTraderId().equals(order.getTrader().getId()))) {
+            order.setTrader(getActiveTraderByIdOrThrow(orderDto.getTraderId()));
+        }
         calculateOrderAmounts(order);
         orderRepository.save(order);
+        orderHistoryService.recordChanges(order, before);
         return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
     }
 
     @Override
     public void deleteOrder(Long id) {
         Order order = getOrderByIdOrThrow(id);
+        orderHistoryService.record(order, EOrderHistoryAction.DELETED, null, null, null);
         orderRepository.delete(order);
         GenericResponse.successResponseWithoutData(DATA_DELETED_SUCCESSFULLY);
     }
@@ -128,6 +144,9 @@ public class OrderServiceImpl implements OrderService {
             throw new ResourceNotFoundException(
                     String.format(messageService.getMessage("delivery.status.not.found.err.msg"), request.getDeliveryStatus()),
                     INVALID_DELIVERY_STATUS_ERR_CODE);
+
+        Map<Long, Map<String, String>> before = new HashMap<>();
+        for (Order order : orderList) before.put(order.getId(), orderHistoryService.snapshot(order));
 
         switch (status) {
             case DELIVERED:
@@ -170,6 +189,7 @@ public class OrderServiceImpl implements OrderService {
                     order.setDeliveryDate(new Date());
                 }
         }
+        for (Order order : orderList) orderHistoryService.recordChanges(order, before.get(order.getId()));
         return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
     }
 
@@ -187,6 +207,7 @@ public class OrderServiceImpl implements OrderService {
                     String.format(messageService.getMessage("delivery.status.not.found.err.msg"), request.getDeliveryStatus()),
                     INVALID_DELIVERY_STATUS_ERR_CODE);
 
+        Map<String, String> before = orderHistoryService.snapshot(order);
         switch (status) {
             case DELIVERED:
                 order.setDeliveryStatus(EDeliveryStatus.DELIVERED);
@@ -218,6 +239,7 @@ public class OrderServiceImpl implements OrderService {
         }
         updateAndRecalculateAmounts(order, request);
         orderRepository.save(order);
+        orderHistoryService.recordChanges(order, before);
         return GenericResponse.successResponseWithoutData(DATA_UPDATED_SUCCESSFULLY);
     }
 

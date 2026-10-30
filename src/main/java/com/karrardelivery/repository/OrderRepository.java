@@ -118,4 +118,54 @@ public interface OrderRepository extends JpaRepository<Order, Long> , JpaSpecifi
     List<Object[]> findOrdersCountPerMonth(@Param("startDate") Date startDate,
                                            @Param("status") EDeliveryStatus status);
 
+
+    // ---------------------------------------------------------------- dashboard
+
+    long countByOrderDateGreaterThanEqualAndOrderDateLessThan(Date from, Date to);
+
+    long countByDeliveryStatusAndDeliveryDateGreaterThanEqualAndDeliveryDateLessThan(
+            EDeliveryStatus deliveryStatus, Date from, Date to);
+
+    long countByDeliveryStatus(EDeliveryStatus deliveryStatus);
+
+    long countByDeliveryStatusAndOrderDateBefore(EDeliveryStatus deliveryStatus, Date date);
+
+    /** [delivered count, sum of delivery fees, sum of company net] for orders with this status delivered in [from, to) */
+    @Query("""
+    SELECT COUNT(o), COALESCE(SUM(o.deliveryAmount), 0), COALESCE(SUM(o.netCompanyAmount), 0)
+    FROM Order o
+    WHERE o.deliveryStatus = :status
+      AND o.deliveryDate >= :from
+      AND o.deliveryDate < :to
+""")
+    List<Object[]> sumMoneyBetween(@Param("status") EDeliveryStatus status,
+                                   @Param("from") Date from,
+                                   @Param("to") Date to);
+
+    /**
+     * Per agent: [agentId, name, phone, assigned today, delivered today, under delivery now, cash to collect]
+     * cash to collect = total amount of orders still under delivery + orders delivered today.
+     */
+    @Query("""
+    SELECT a.id, a.name, a.phoneNumber,
+           SUM(CASE WHEN o.orderDate >= :start AND o.orderDate < :end THEN 1 ELSE 0 END),
+           SUM(CASE WHEN o.deliveryStatus = :delivered AND o.deliveryDate >= :start AND o.deliveryDate < :end THEN 1 ELSE 0 END),
+           SUM(CASE WHEN o.deliveryStatus = :underDelivery THEN 1 ELSE 0 END),
+           COALESCE(SUM(CASE WHEN o.deliveryStatus = :underDelivery
+                              OR (o.deliveryStatus = :delivered AND o.deliveryDate >= :start AND o.deliveryDate < :end)
+                             THEN o.totalAmount ELSE 0 END), 0)
+    FROM Order o
+    JOIN o.agent a
+    WHERE a.deleted = false
+      AND ((o.orderDate >= :start AND o.orderDate < :end)
+           OR o.deliveryStatus = :underDelivery
+           OR (o.deliveryStatus = :delivered AND o.deliveryDate >= :start AND o.deliveryDate < :end))
+    GROUP BY a.id, a.name, a.phoneNumber
+    ORDER BY a.name
+""")
+    List<Object[]> findAgentsActivity(@Param("start") Date start,
+                                      @Param("end") Date end,
+                                      @Param("delivered") EDeliveryStatus delivered,
+                                      @Param("underDelivery") EDeliveryStatus underDelivery);
+
 }

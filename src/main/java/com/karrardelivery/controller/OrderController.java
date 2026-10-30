@@ -4,6 +4,7 @@ import com.karrardelivery.constant.ApiUrls;
 import com.karrardelivery.dto.*;
 import com.karrardelivery.entity.enums.EDeliveryStatus;
 import com.karrardelivery.service.OrderService;
+import com.karrardelivery.service.OrderHistoryService;
 import com.karrardelivery.controller.spec.OrderSpec;
 import com.karrardelivery.service.impl.OrderImportService;
 import com.karrardelivery.service.impl.OrderReportDataService;
@@ -32,6 +33,7 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderReportDataService orderReportDataService;
     private final OrderImportService orderImportService;
+    private final OrderHistoryService orderHistoryService;
 
     @PostMapping
     public ResponseEntity<GenericResponse<String>> createOrder(@RequestBody OrderDto orderDto) {
@@ -52,6 +54,11 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<GenericResponse<OrderDto>> getOrderById(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrderById(id));
+    }
+
+    @GetMapping(ORDER_HISTORY)
+    public ResponseEntity<GenericResponse<List<OrderHistoryDto>>> getOrderHistory(@PathVariable Long id) {
+        return ResponseEntity.ok(orderHistoryService.getOrderHistory(id));
     }
 
     @PutMapping("/{id}")

@@ -26,4 +26,9 @@ public class ApiUrls {
     public final static String UPLOAD_ORDERS = "/upload-orders";
     public final static String COUNT_PER_MONTH = "/count-per-month";
     public final static String TRADER_FINANCIAL_REPORT = "/trader-financial-report";
+    public final static String ORDER_HISTORY = "/{id}/history";
+    public final static String DASHBOARD = BASE_URL + "dashboard";
+    public final static String DASHBOARD_SUMMARY = "/summary";
+    public final static String DASHBOARD_MONEY = "/money";
+    public final static String DASHBOARD_AGENTS_TODAY = "/agents-today";
 }
