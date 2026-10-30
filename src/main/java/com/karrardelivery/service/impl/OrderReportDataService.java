@@ -78,7 +78,11 @@ public class OrderReportDataService {
     }
 
     public List<OrderDto> fetchOrderListData(OrderSpec spec) {
-        Specification<Order> specification = Specification.where(spec);
+        String fromDateStr = request.getParameter("fromOrderDate");
+        String toDateStr = request.getParameter("toOrderDate");
+        Specification<Order> specification = Specification.where(spec).
+                and(OrderSpec.fromDate("orderDate", fromDateStr)).
+                and(OrderSpec.toDate("orderDate", toDateStr));
         List<Order> orderList = orderRepository.findAll(specification);
         return orderMapper.toDtoList(orderList);
     }
