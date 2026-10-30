@@ -10,7 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.karrardelivery.constant.ApiUrls.*;
 
@@ -32,7 +36,11 @@ public class AuthController {
                         loginRequest.getPassword()
                 )
         );
-        var accessToken = jwtUtil.generateAccessToken(loginRequest.getPhone());
+        // roles as granted by UserDetailsServiceImpl, e.g. ["ROLE_ADMIN"]
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        var accessToken = jwtUtil.generateAccessToken(loginRequest.getPhone(), roles);
         var refreshToken = jwtUtil.generateRefreshToken(loginRequest.getPhone());
         return new AuthDto(accessToken, refreshToken);
     }

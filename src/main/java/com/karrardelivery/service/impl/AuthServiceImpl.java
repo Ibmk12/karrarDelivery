@@ -1,5 +1,7 @@
 package com.karrardelivery.service.impl;
 
+import java.util.Collections;
+import java.util.List;
 import com.karrardelivery.dto.AuthDto;
 import com.karrardelivery.dto.GenericResponse;
 import com.karrardelivery.entity.management.BlacklistedToken;
@@ -54,7 +56,11 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN,
                         messageService.getMessage("user.not.found")));
 
-        String newAccessToken = jwtUtil.generateAccessToken(phone);
+        // keep the roles claim when the access token is refreshed
+        List<String> roles = user.getRole() == null
+                ? Collections.emptyList()
+                : Collections.singletonList("ROLE_" + user.getRole());
+        String newAccessToken = jwtUtil.generateAccessToken(phone, roles);
         return new AuthDto(newAccessToken, refreshToken);
     }
 

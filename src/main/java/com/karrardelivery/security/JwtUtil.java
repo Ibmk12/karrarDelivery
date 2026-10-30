@@ -4,7 +4,9 @@ import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtil {
@@ -19,7 +21,22 @@ public class JwtUtil {
     private long refreshTokenExpiration;
 
     public String generateAccessToken(String phone) {
-        return generateToken(phone, accessTokenExpiration, "access");
+        return generateAccessToken(phone, Collections.emptyList());
+    }
+
+    /**
+     * Access token that also carries the user's roles, e.g. "roles": ["ROLE_ADMIN"].
+     * The dashboard reads this claim to decide which menus and pages to show.
+     */
+    public String generateAccessToken(String phone, List<String> roles) {
+        return Jwts.builder()
+                .setSubject(phone)
+                .claim("type", "access")
+                .claim("roles", roles == null ? Collections.emptyList() : roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + (accessTokenExpiration * 60 * 1000)))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
     }
 
     public String generateRefreshToken(String phone) {
