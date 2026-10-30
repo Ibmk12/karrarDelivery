@@ -17,4 +17,5 @@
     <include file="db/changelog/sql/1.0.9-alter-agen-table.sql"/>
     <include file="db/changelog/sql/1.1.0-alter-trader-table.sql"/>
     <include file="db/changelog/sql/1.1.1-create-order-history-table.sql"/>
+    <include file="db/changelog/sql/1.1.2-create-saved-order-view-table.sql"/>
 </databaseChangeLog>
